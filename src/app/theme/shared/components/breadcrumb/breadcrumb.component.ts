@@ -56,28 +56,30 @@ export class BreadcrumbComponent {
     }
 
     filterNavigation(navItems: NavigationItem[], activeLink: string): titleType[] {
-        for (const navItem of navItems) {
-            if (navItem.type === 'item' && 'url' in navItem && navItem.url === activeLink) {
-                return [
-                    {
-                        url: 'url' in navItem ? navItem.url : false,
-                        title: navItem.title,
-                        breadcrumbs: 'breadcrumbs' in navItem ? navItem.breadcrumbs : true,
-                        type: navItem.type
+        if (navItems.length > 0) {
+            for (const navItem of navItems) {
+                if (navItem.type === 'item' && 'url' in navItem && navItem.url === activeLink) {
+                    return [
+                        {
+                            url: 'url' in navItem ? navItem.url : false,
+                            title: navItem.title,
+                            breadcrumbs: 'breadcrumbs' in navItem ? navItem.breadcrumbs : true,
+                            type: navItem.type
+                        }
+                    ];
+                }
+                if ((navItem.type === 'group' || navItem.type === 'collapse') && 'children' in navItem) {
+                    // eslint-disable-next-line
+                    const breadcrumbList = this.filterNavigation(navItem.children!, activeLink);
+                    if (breadcrumbList.length > 0) {
+                        breadcrumbList.unshift({
+                            url: 'url' in navItem ? navItem.url : false,
+                            title: navItem.title,
+                            breadcrumbs: 'breadcrumbs' in navItem ? navItem.breadcrumbs : true,
+                            type: navItem.type
+                        });
+                        return breadcrumbList;
                     }
-                ];
-            }
-            if ((navItem.type === 'group' || navItem.type === 'collapse') && 'children' in navItem) {
-                // eslint-disable-next-line
-                const breadcrumbList = this.filterNavigation(navItem.children!, activeLink);
-                if (breadcrumbList.length > 0) {
-                    breadcrumbList.unshift({
-                        url: 'url' in navItem ? navItem.url : false,
-                        title: navItem.title,
-                        breadcrumbs: 'breadcrumbs' in navItem ? navItem.breadcrumbs : true,
-                        type: navItem.type
-                    });
-                    return breadcrumbList;
                 }
             }
         }
