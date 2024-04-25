@@ -56,7 +56,7 @@ export class BreadcrumbComponent {
     }
 
     filterNavigation(navItems: NavigationItem[], activeLink: string): titleType[] {
-        if (navItems.length > 0) {
+        if (Array.isArray(navItems)) {
             for (const navItem of navItems) {
                 if (navItem.type === 'item' && 'url' in navItem && navItem.url === activeLink) {
                     return [
@@ -83,6 +83,7 @@ export class BreadcrumbComponent {
                 }
             }
         }
+
         return [];
     }
 }
