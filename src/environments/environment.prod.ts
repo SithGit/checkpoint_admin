@@ -1,4 +1,6 @@
+import packageInfo from '../../package.json';
+
 export const environment = {
-    production: true,
-    GOOGLE_MAPS_API_KEY: 'AIzaSyDpgQMpcfx1QU-8SM-ljcgjG4xrYtIYby4',
+  appVersion: packageInfo.version,
+  production: true
 };

@@ -3,50 +3,38 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "adminto-angular": {
+        "checkpoint_admin": {
             "projectType": "application",
             "schematics": {
                 "@schematics/angular:component": {
                     "style": "scss"
-                },
-                "@schematics/angular:application": {
-                    "strict": true
                 }
             },
             "root": "",
             "sourceRoot": "src",
             "prefix": "app",
-            "i18n": {
-                "sourceLocale": "en-US",
-                "locales": {
-                    "es": "src/locale/messages.es.json",
-                    "en": "src/locale/messages.json"
-                }
-            },
             "architect": {
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "localize": false,
-                        "aot": true,
-                        "outputPath": "dist/adminto-angular",
+                        "allowedCommonJsDependencies": ["bezier-easing", "apexcharts"],
+                        "outputPath": "dist",
                         "index": "src/index.html",
                         "main": "src/main.ts",
                         "polyfills": "src/polyfills.ts",
                         "tsConfig": "tsconfig.app.json",
                         "inlineStyleLanguage": "scss",
                         "assets": ["src/favicon.ico", "src/assets"],
-                        "styles": ["src/assets/scss/theme.scss"],
-                        "scripts": [],
-                        "allowedCommonJsDependencies": ["lodash", "ngx-lightbox"]
+                        "styles": ["src/styles.scss"],
+                        "scripts": []
                     },
                     "configurations": {
                         "production": {
                             "budgets": [
                                 {
                                     "type": "initial",
-                                    "maximumWarning": "1.8mb",
-                                    "maximumError": "1.8mb"
+                                    "maximumWarning": "1mb",
+                                    "maximumError": "1mb"
                                 },
                                 {
                                     "type": "anyComponentStyle",
@@ -61,12 +49,6 @@
                                 }
                             ],
                             "outputHashing": "all"
-                        },
-                        "es": {
-                            "localize": ["es"]
-                        },
-                        "en": {
-                            "localize": ["en-US"]
                         },
                         "development": {
                             "buildOptimizer": false,
@@ -83,16 +65,10 @@
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "configurations": {
                         "production": {
-                            "browserTarget": "adminto-angular:build:production"
+                            "buildTarget": "checkpoint_admin:build:production"
                         },
                         "development": {
-                            "browserTarget": "adminto-angular:build:development"
-                        },
-                        "es": {
-                            "browserTarget": "adminto-angular:build:es"
-                        },
-                        "en": {
-                            "browserTarget": "adminto-angular:build:en"
+                            "buildTarget": "checkpoint_admin:build:development"
                         }
                     },
                     "defaultConfiguration": "development"
@@ -100,7 +76,7 @@
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "adminto-angular:build"
+                        "buildTarget": "checkpoint_admin:build"
                     }
                 },
                 "test": {
@@ -115,9 +91,18 @@
                         "styles": ["src/styles.scss"],
                         "scripts": []
                     }
+                },
+                "lint": {
+                    "builder": "@angular-eslint/builder:lint",
+                    "options": {
+                        "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+                    }
                 }
             }
         }
     },
-    "defaultProject": "adminto-angular"
+    "cli": {
+        "analytics": "78098098-d354-45f7-8651-2271a72fc826",
+        "schematicCollections": ["@angular-eslint/schematics"]
+    }
 }

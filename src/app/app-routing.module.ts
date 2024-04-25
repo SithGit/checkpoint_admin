@@ -1,61 +1,65 @@
+// angular import
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from './core/guards/auth.guard';
-import { LayoutContainerComponent } from './layout/layout-container/layout-container.component';
-import { PublicLayoutComponent } from './layout/public-layout/public-layout.component';
-import { ComingSoonComponent } from './pages/extra-pages/coming-soon/coming-soon.component';
-import { Error404Component } from './pages/extra-pages/error404/error404.component';
-import { Error500Component } from './pages/extra-pages/error500/error500.component';
-import { MaintenanceComponent } from './pages/extra-pages/maintenance/maintenance.component';
+
+// Project import
+import { AdminComponent } from './theme/layouts/admin/admin.component';
+import { GuestComponent } from './theme/layouts/guest/guest.component';
 
 const routes: Routes = [
     {
         path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full',
-    },
-    {
-        path: '',
-        component: LayoutContainerComponent,
-        canActivate: [AuthGuard],
+        component: AdminComponent,
         children: [
             {
                 path: '',
-                loadChildren: () => import('./pages/pages.module').then((m) => m.PagesModule),
+                redirectTo: '/dashboard/default',
+                pathMatch: 'full'
             },
             {
-                path: 'apps',
-                loadChildren: () => import('./apps/apps.module').then((m) => m.AppsModule),
+                path: 'dashboard/default',
+                loadComponent: () => import('./pages/dashboard/dashboard.component')
             },
-        ],
+            {
+                path: 'typography',
+                loadComponent: () => import('./pages/ui-component/typography/typography.component')
+            },
+            {
+                path: 'card',
+                loadComponent: () => import('./pages/component/card/card.component')
+            },
+            {
+                path: 'breadcrumb',
+                loadComponent: () => import('./pages/component/breadcrumb/breadcrumb.component')
+            },
+            {
+                path: 'spinner',
+                loadComponent: () => import('./pages/component/spinner/spinner.component')
+            },
+            {
+                path: 'color',
+                loadComponent: () => import('./pages/ui-component/ui-color/ui-color.component')
+            },
+            {
+                path: 'sample-page',
+                loadComponent: () => import('./pages/other/sample-page/sample-page.component')
+            }
+        ]
     },
     {
         path: '',
-        component: PublicLayoutComponent,
+        component: GuestComponent,
         children: [
-            { path: 'auth', loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule) },
             {
-                path: 'error-404',
-                component: Error404Component,
-            },
-            {
-                path: 'error-500',
-                component: Error500Component,
-            },
-            {
-                path: 'maintenance',
-                component: MaintenanceComponent,
-            },
-            {
-                path: 'coming-soon',
-                component: ComingSoonComponent,
-            },
-        ],
-    },
+                path: 'login',
+                loadComponent: () => import('./pages/authentication/login/login.component')
+            }
+        ]
+    }
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes, { anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' })],
-    exports: [RouterModule],
+    imports: [RouterModule.forRoot(routes)],
+    exports: [RouterModule]
 })
 export class AppRoutingModule {}

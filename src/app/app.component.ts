@@ -1,10 +1,11 @@
+// angular import
 import { Component } from '@angular/core';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
+    styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-    title = 'adminto-angular';
+    title = 'PHAKTAI Ltd. | Admin Dashboard';
 }
