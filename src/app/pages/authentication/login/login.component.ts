@@ -29,6 +29,6 @@ export default class LoginComponent {
 
     login() {
         console.log('Login Clicked');
-        this.router.navigate(['dashboard/default']);
+        this.router.parseUrl('dashboard');
     }
 }
