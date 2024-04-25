@@ -17,22 +17,36 @@ import { NavContentComponent } from './theme/layouts/admin/navigation/nav-conten
 import { NavCollapseComponent } from './theme/layouts/admin/navigation/nav-content/nav-collapse/nav-collapse.component';
 import { NavGroupComponent } from './theme/layouts/admin/navigation/nav-content/nav-group/nav-group.component';
 import { NavItemComponent } from './theme/layouts/admin/navigation/nav-content/nav-item/nav-item.component';
+import { JwtModule } from '@auth0/angular-jwt';
+import { tokenGetter } from './utils/token-extract.utils';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    AdminComponent,
-    GuestComponent,
-    NavigationComponent,
-    NavBarComponent,
-    NavLeftComponent,
-    NavRightComponent,
-    NavContentComponent,
-    NavCollapseComponent,
-    NavGroupComponent,
-    NavItemComponent
-  ],
-  imports: [BrowserModule, AppRoutingModule, SharedModule, BrowserAnimationsModule],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        AdminComponent,
+        GuestComponent,
+        NavigationComponent,
+        NavBarComponent,
+        NavLeftComponent,
+        NavRightComponent,
+        NavContentComponent,
+        NavCollapseComponent,
+        NavGroupComponent,
+        NavItemComponent
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        SharedModule,
+        BrowserAnimationsModule,
+        HttpClientModule,
+        JwtModule.forRoot({
+            config: {
+                tokenGetter: tokenGetter
+            }
+        })
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule {}

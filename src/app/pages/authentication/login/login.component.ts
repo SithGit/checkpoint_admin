@@ -36,6 +36,7 @@ export default class LoginComponent {
                     console.log('res', res);
                     if (res['accessToken']) {
                         localStorage.setItem('token', res['accessToken']);
+
                         this.onLoading = false;
                         this.router.navigate(['/dashboard']);
                     }

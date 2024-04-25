@@ -17,4 +17,14 @@ export class AuthGuard {
         // Redirect to login page
         return this.router.createUrlTree(['/login']);
     }
+
+    refreshToken() {
+        // Check if user is logged in
+        if (localStorage.getItem('token')) {
+            return true;
+        }
+
+        // Redirect to login page
+        return this.router.createUrlTree(['/login']);
+    }
 }

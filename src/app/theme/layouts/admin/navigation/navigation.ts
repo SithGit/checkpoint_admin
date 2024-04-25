@@ -34,7 +34,7 @@ export const NavigationItems: NavigationItem[] = [
                 breadcrumbs: false
             }
         ]
-    },
+    }
     // {
     //     id: 'elements',
     //     title: 'UI Components',
@@ -93,24 +93,24 @@ export const NavigationItems: NavigationItem[] = [
     //         }
     //     ]
     // },
-    {
-        id: 'authentication',
-        title: 'Authentication',
-        type: 'group',
-        icon: 'icon-navigation',
-        children: [
-            {
-                id: 'login',
-                title: 'Logout',
-                type: 'item',
-                classes: 'nav-item',
-                url: '/login',
-                icon: 'ti ti-login',
-                target: true,
-                breadcrumbs: false
-            }
-        ]
-    }
+    // {
+    //     id: 'authentication',
+    //     title: 'Authentication',
+    //     type: 'group',
+    //     icon: 'icon-navigation',
+    //     children: [
+    //         {
+    //             id: 'login',
+    //             title: 'Logout',
+    //             type: 'item',
+    //             classes: 'nav-item',
+    //             url: '/login',
+    //             icon: 'ti ti-login',
+    //             target: true,
+    //             breadcrumbs: false
+    //         }
+    //     ]
+    // }
     // {
     //     id: 'other',
     //     title: 'Other',
