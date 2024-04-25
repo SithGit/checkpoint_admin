@@ -243,10 +243,14 @@ export default class DashboardComponent implements OnInit {
 
         this.http
             .get(`http://202.137.134.162:3000/api/Reports/get-all-check-point?startDate=${startDate}&endDate=${endDate}`, setHeader)
-            .subscribe((data: any) => {
-                console.log(data.data);
-                this.requestTodayData = data.data;
+            .subscribe((response: any) => {
+                this.requestTodayData = response.data;
+                this.setData();
             });
+    }
+
+    setData() {
+        console.log(this.requestTodayData);
     }
 
     // public method
