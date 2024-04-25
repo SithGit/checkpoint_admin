@@ -1,5 +1,6 @@
 // angular import
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-nav-right',
@@ -7,6 +8,9 @@ import { Component } from '@angular/core';
     styleUrls: ['./nav-right.component.scss']
 })
 export class NavRightComponent {
+    // public method
+    constructor(private router: Router) {}
+
     // public method
     profile = [
         {
@@ -23,4 +27,12 @@ export class NavRightComponent {
             title: 'Logout'
         }
     ];
+
+    onLogOut() {
+        // Remove token from local storage
+        localStorage.removeItem('token');
+
+        // Redirect to login page
+        this.router.navigate(['/login']);
+    }
 }
