@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { catchError, of } from 'rxjs';
+import { catchError, map, of, tap } from 'rxjs';
 
 @Component({
     selector: 'app-login',
@@ -32,6 +32,14 @@ export default class LoginComponent {
         this.http
             .post('http://202.137.134.162:3000/api/authentication/login', this.loginObj)
             .pipe(
+                map((res) => {
+                    console.log('res', res);
+                    if (res['accessToken']) {
+                        localStorage.setItem('token', res['accessToken']);
+                        this.onLoading = false;
+                        this.router.navigate(['/dashboard']);
+                    }
+                }),
                 catchError((error) => {
                     console.log('error ma', error);
                     this.hasError = true;
@@ -39,13 +47,7 @@ export default class LoginComponent {
                     return of([]);
                 })
             )
-            .subscribe((res) => {
-                if (res['token']) {
-                    localStorage.setItem('token', res['token']);
-                    this.onLoading = false;
-                    this.router.navigate(['/dashboard']);
-                }
-            });
+            .subscribe();
     }
 }
 
