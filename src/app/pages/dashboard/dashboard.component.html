@@ -1,26 +1,30 @@
 <div class="row">
     <!-- [ sample-page ] start -->
-    @for (task of card; track task) {
-        <div class="col-md-6 col-xl-3">
-            <div class="card">
-                <div class="card-body">
-                    <h6 class="mb-2 f-w-400 text-muted">{{ task.title }}</h6>
-                    <h4 class="mb-3">
-                        {{ task.amount }}
-                        <span class="badge {{ task.background }} border {{ task.border }} "><i class="{{ task.icon }}"></i> {{ task.percentage }}</span>
-                    </h4>
-                    <p class="mb-0 text-muted text-sm">
-                        You made an extra
-                        <span class="{{ task.color }}">{{ task.number }}</span> this year
-                    </p>
+    @if (!isLoading && checkPointData.length > 0) {
+        @for (item of checkPointData; track item) {
+            <div class="col-md-6 col-xl-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="mb-2 f-w-400 text-muted">{{ item.vehicle_type }}</h6>
+                        <h4 class="mb-3">
+                            {{ item.count }}
+                            <!-- <span class="badge {{ task.background }} border {{ task.border }} "><i class="{{ task.icon }}"></i> {{ task.percentage }}</span> -->
+                        </h4>
+                        <!-- 
+                        <p class="mb-0 text-muted text-sm">
+                            You made an extra
+                            <span class="{{ task.color }}">{{ task.number }}</span> this year
+                        </p> -->
+                    </div>
                 </div>
             </div>
-        </div>
+        }
     }
 
     <div class="col-md-12 col-xl-8">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h5 class="mb-0">Passed Vehicle</h5>
+
             <ul ngbNav aria-busy="true" #nav="ngbNav" class="nav-pills justify-content-end mb-0" (navChange)="onNavChange($event)">
                 <li [ngbNavItem]="1">
                     <a ngbNavLink>Week</a>
@@ -28,6 +32,7 @@
                         <div id="visitor-chart"></div>
                     </ng-template>
                 </li>
+
                 <li [ngbNavItem]="2">
                     <a ngbNavLink>Month</a>
                     <ng-template ngbNavContent>
@@ -36,12 +41,14 @@
                 </li>
             </ul>
         </div>
+
         <div class="card">
             <div class="card-body">
                 <div [ngbNavOutlet]="nav"></div>
             </div>
         </div>
     </div>
+
     <div class="col-md-12 col-xl-4">
         <h5 class="mb-3">Income Overview</h5>
         <div class="card">
@@ -98,6 +105,7 @@
             </div>
         </div>
     </div>
+
     <div class="col-md-12 col-xl-4">
         <h5 class="mb-3">Analytics Report</h5>
         <div class="card">
@@ -146,6 +154,7 @@
             </div>
         </div>
     </div>
+
     <div class="col-md-12 col-xl-4">
         <h5 class="mb-3">Transaction History</h5>
         <div class="card">
@@ -171,6 +180,7 @@
                 }
             </div>
         </div>
+
         <div class="card">
             <div class="card-body">
                 <div class="row justify-content-between">
@@ -186,6 +196,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="d-grid">
                     <div class="btn btn-primary">Need Help?</div>
                 </div>

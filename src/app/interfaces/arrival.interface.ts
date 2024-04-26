@@ -1,14 +1,14 @@
-export interface Welcome {
-    data: WelcomeDatum[];
+export interface ICheckPoint {
+    data: CheckPointData[];
 }
 
-export interface WelcomeDatum {
+export interface CheckPointData {
     vehicle_type: string;
     count: number;
-    data: DatumDatum[];
+    data: InnerCheckPoint[];
 }
 
-export interface DatumDatum {
+export interface InnerCheckPoint {
     id: string;
     Car_Arrive_Time: Date;
     Vehicle_Type: string;

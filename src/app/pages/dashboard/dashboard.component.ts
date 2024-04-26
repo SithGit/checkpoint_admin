@@ -23,8 +23,8 @@ import {
     ApexGrid,
     ApexLegend
 } from 'ng-apexcharts';
-import { HttpClient } from '@angular/common/http';
-import { getTodayDateRange } from 'src/app/utils/get-date.util';
+import { DataFetcherService } from './dashboard.service';
+import { CheckPointData, ICheckPoint } from 'src/app/interfaces/arrival.interface';
 
 export type ChartOptions = {
     series: ApexAxisChartSeries;
@@ -47,8 +47,8 @@ export type ChartOptions = {
     styleUrls: ['./dashboard.component.scss']
 })
 export default class DashboardComponent implements OnInit {
-    private requestTodayData: any[] = [];
-
+    checkPointData: CheckPointData[] = [];
+    isLoading = false;
     // public props
     @ViewChild('chart') chart: ChartComponent;
     chartOptions_4: Partial<ChartOptions>;
@@ -60,7 +60,7 @@ export default class DashboardComponent implements OnInit {
     weekChart: any;
 
     // constructor
-    constructor(private http: HttpClient) {
+    constructor(private dataFetcher: DataFetcherService) {
         this.chartOptions_4 = {
             chart: {
                 type: 'bar',
@@ -223,34 +223,17 @@ export default class DashboardComponent implements OnInit {
             this.weekChart.render();
         }, 500);
 
-        this.fetchTodayData();
-    }
-
-    fetchTodayData() {
-        const { startDate, endDate } = getTodayDateRange();
-
-        const getToken = localStorage.getItem('token');
-
-        if (!getToken) {
-            return;
-        }
-
-        const setHeader = {
-            headers: {
-                Authorization: getToken
+        this.dataFetcher.getData().subscribe(
+            (data) => {
+                console.log('Fetched data ', data.data);
+                this.checkPointData = data.data;
+                this.isLoading = false;
+            },
+            (error) => {
+                this.isLoading = false;
+                throw new Error(error);
             }
-        };
-
-        this.http
-            .get(`http://202.137.134.162:3000/api/Reports/get-all-check-point?startDate=${startDate}&endDate=${endDate}`, setHeader)
-            .subscribe((response: any) => {
-                this.requestTodayData = response.data;
-                this.setData();
-            });
-    }
-
-    setData() {
-        console.log(this.requestTodayData);
+        );
     }
 
     // public method
