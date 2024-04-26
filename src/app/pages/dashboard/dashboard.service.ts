@@ -10,7 +10,7 @@ import { getTodayDateRange } from 'src/app/utils/get-date.util';
 export class DataFetcherService {
     constructor(private http: HttpClient) {}
 
-    getData(): Observable<ICheckPoint> {
+    getDayData(): Observable<ICheckPoint> {
         const { startDate, endDate } = getTodayDateRange();
 
         const getToken = localStorage.getItem('token');

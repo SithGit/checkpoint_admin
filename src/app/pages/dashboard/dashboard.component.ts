@@ -57,10 +57,10 @@ export default class DashboardComponent implements OnInit {
     chartOptions_4: Partial<ChartOptions>;
     chartOptions_5: Partial<ChartOptions>;
     chartOptions_6: Partial<ChartOptions>;
-    // eslint-disable-next-line
+
     monthChart: any;
-    // eslint-disable-next-line
     weekChart: any;
+    dayChart: any;
 
     // constructor
     constructor(private dataFetcher: DataFetcherService) {
@@ -221,12 +221,7 @@ export default class DashboardComponent implements OnInit {
 
     // life cycle event
     ngOnInit(): void {
-        setTimeout(() => {
-            this.weekChart = new ApexCharts(document.querySelector('#visitor-chart'), this.weekOptions);
-            this.weekChart.render();
-        }, 500);
-
-        this.dataFetcher.getData().subscribe(
+        this.dataFetcher.getDayData().subscribe(
             (data) => {
                 // refactor object to match to the VehicleType
                 const newValues = data.data.map((item) => {
@@ -239,6 +234,13 @@ export default class DashboardComponent implements OnInit {
 
                 this.checkPointData = newValues;
                 console.log(this.checkPointData);
+
+                setTimeout(() => {
+                    this.dayChart = new ApexCharts(document.querySelector('#day-chart'), this.dayOptions);
+                    console.log('chart data to render', this.dayChart);
+                    this.dayChart.render();
+                }, 500);
+
                 this.isLoading = false;
             },
             (error) => {
@@ -252,14 +254,23 @@ export default class DashboardComponent implements OnInit {
     onNavChange(changeEvent: NgbNavChangeEvent) {
         if (changeEvent.nextId === 1) {
             setTimeout(() => {
-                this.weekChart = new ApexCharts(document.querySelector('#visitor-chart'), this.weekOptions);
-                this.weekChart.render();
+                this.dayChart = new ApexCharts(document.querySelector('#day-chart'), this.dayOptions);
+                console.log(this.dayChart);
+                this.dayChart.render();
             }, 200);
         }
 
         if (changeEvent.nextId === 2) {
             setTimeout(() => {
-                this.monthChart = new ApexCharts(document.querySelector('#visitor-chart-1'), this.monthOptions);
+                this.monthChart = new ApexCharts(document.querySelector('#week-chart'), this.weekOptions);
+                console.log('week chart', this.monthChart);
+                this.monthChart.render();
+            }, 200);
+        }
+
+        if (changeEvent.nextId === 3) {
+            setTimeout(() => {
+                this.monthChart = new ApexCharts(document.querySelector('#month-chart'), this.monthOptions);
                 this.monthChart.render();
             }, 200);
         }
@@ -324,6 +335,33 @@ export default class DashboardComponent implements OnInit {
         },
         xaxis: {
             categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        }
+    };
+
+    dayOptions = {
+        chart: {
+            height: 450,
+            type: 'area',
+            toolbar: {
+                show: false
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        colors: ['#75A47F', '#00215E', '#FFC55A', '#FC4100', '#FF76CE', '#FDFFC2', '#FFC2C2', '#C2FFC2', '#C2C2FF', '#803D3B', '#1E0342', '#222831'],
+        series: this.checkPointData.map((item) => {
+            return {
+                name: item.vehicle_type,
+                data: this.checkPointData.map((i) => i.count)
+            };
+        }),
+        stroke: {
+            curve: 'smooth',
+            width: 2
+        },
+        xaxis: {
+            categories: this.checkPointData.map((item) => item.vehicle_type)
         }
     };
 
