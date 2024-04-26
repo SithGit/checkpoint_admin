@@ -3,13 +3,15 @@
         <div class="d-flex align-items-center justify-content-between mb-3">
             <ul ngbNav aria-busy="true" #nav="ngbNav" class="nav-pills justify-content-end mb-0" (navChange)="onNavChange($event)">
                 <li [ngbNavItem]="1">
-                    <a ngbNavLink>Day</a>
+                    <a ngbNavLink>ມື້</a>
                 </li>
 
-                <li [ngbNavItem]="2"><a ngbNavLink>Week</a></li>
+                <li [ngbNavItem]="2">
+                    <a ngbNavLink>ອາທິດ</a>
+                </li>
 
                 <li [ngbNavItem]="3">
-                    <a ngbNavLink>Month</a>
+                    <a ngbNavLink>ເດືອນ</a>
                 </li>
             </ul>
         </div>
