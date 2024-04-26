@@ -16,81 +16,83 @@
             </ul>
         </div>
     </div>
+    @if (isLoading) {
+        <app-spinner></app-spinner>
+    } @else {
+        <!-- [ sample-page ] start -->
+        @if (!isLoading && checkPointData.length > 0) {
+            @for (item of checkPointData; track item) {
+                <div class="col-md-6 col-xl-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="mb-2 f-w-400 text-muted">{{ item.vehicle_type }}</h6>
+                            <h4 class="mb-3">
+                                {{ item.count }}
+                            </h4>
 
-    <!-- [ sample-page ] start -->
-    @if (!isLoading && checkPointData.length > 0) {
-        @for (item of checkPointData; track item) {
-            <div class="col-md-6 col-xl-2">
-                <div class="card">
-                    <div class="card-body">
-                        <h6 class="mb-2 f-w-400 text-muted">{{ item.vehicle_type }}</h6>
-                        <h4 class="mb-3">
-                            {{ item.count }}
-                        </h4>
+                            <p class="mb-0 text-muted text-sm">
+                                ໄດ້ມີລົດຜ່ານ
+                                <span class="text-primary">{{ item.count }}</span> ຄັນໃນມື້ນີ້.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
 
-                        <p class="mb-0 text-muted text-sm">
-                            ໄດ້ມີລົດຜ່ານ
-                            <span class="text-primary">{{ item.count }}</span> ຄັນໃນມື້ນີ້.
-                        </p>
+        <div class="col-md-12">
+            <h5 class="mb-3">Report</h5>
+            <div class="card">
+                <div class="card-body">
+                    <apx-chart
+                        [series]="chartOptions_6.series"
+                        [chart]="chartOptions_6.chart"
+                        [dataLabels]="chartOptions_6.dataLabels"
+                        [legend]="chartOptions_6.legend"
+                        [xaxis]="chartOptions_6.xaxis"
+                        [colors]="chartOptions_6.colors"
+                        [stroke]="chartOptions_6.stroke"
+                        [plotOptions]="chartOptions_6.plotOptions"
+                    ></apx-chart>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 col-xl-12">
+            <h5 class="mb-3">Recent Orders</h5>
+            <div class="card tbl-card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-borderless mb-0">
+                            <thead>
+                                <tr>
+                                    <th>TRACKING NO.</th>
+                                    <th>PRODUCT NAME</th>
+                                    <th class="text-end">TOTAL ORDER</th>
+                                    <th class="px-5">STATUS</th>
+                                    <th class="text-end">TOTAL AMOUNT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (task of tables; track task) {
+                                    <tr>
+                                        <td>
+                                            <a href="javascript:" class="text-muted">{{ task.id }}</a>
+                                        </td>
+                                        <td>{{ task.name }}</td>
+                                        <td class="text-end">{{ task.order }}</td>
+                                        <td>
+                                            <span class="px-4 d-block"><i class="{{ task.status_type }} m-r-5"></i>{{ task.status }}</span>
+                                        </td>
+                                        <td class="text-end">{{ task.amount }}</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-        }
+        </div>
     }
-
-    <div class="col-md-12">
-        <h5 class="mb-3">Report</h5>
-        <div class="card">
-            <div class="card-body">
-                <apx-chart
-                    [series]="chartOptions_6.series"
-                    [chart]="chartOptions_6.chart"
-                    [dataLabels]="chartOptions_6.dataLabels"
-                    [legend]="chartOptions_6.legend"
-                    [xaxis]="chartOptions_6.xaxis"
-                    [colors]="chartOptions_6.colors"
-                    [stroke]="chartOptions_6.stroke"
-                    [plotOptions]="chartOptions_6.plotOptions"
-                ></apx-chart>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-12 col-xl-12">
-        <h5 class="mb-3">Recent Orders</h5>
-        <div class="card tbl-card">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover table-borderless mb-0">
-                        <thead>
-                            <tr>
-                                <th>TRACKING NO.</th>
-                                <th>PRODUCT NAME</th>
-                                <th class="text-end">TOTAL ORDER</th>
-                                <th class="px-5">STATUS</th>
-                                <th class="text-end">TOTAL AMOUNT</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for (task of tables; track task) {
-                                <tr>
-                                    <td>
-                                        <a href="javascript:" class="text-muted">{{ task.id }}</a>
-                                    </td>
-                                    <td>{{ task.name }}</td>
-                                    <td class="text-end">{{ task.order }}</td>
-                                    <td>
-                                        <span class="px-4 d-block"><i class="{{ task.status_type }} m-r-5"></i>{{ task.status }}</span>
-                                    </td>
-                                    <td class="text-end">{{ task.amount }}</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- [ sample-page ] end -->
 </div>

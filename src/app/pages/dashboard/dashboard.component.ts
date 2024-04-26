@@ -24,7 +24,7 @@ import {
     ApexLegend
 } from 'ng-apexcharts';
 import { DataFetcherService } from './dashboard.service';
-import { CheckPointData, ICheckPoint } from 'src/app/interfaces/arrival.interface';
+import { CheckPointData } from 'src/app/interfaces/arrival.interface';
 import { IVehicleType } from 'src/app/interfaces/vehicle.type';
 import { vehicles } from 'src/app/utils/vehicle.util';
 
@@ -64,102 +64,6 @@ export default class DashboardComponent implements OnInit {
 
     // constructor
     constructor(private dataFetcher: DataFetcherService) {
-        this.chartOptions_4 = {
-            chart: {
-                type: 'bar',
-                height: 365,
-                toolbar: {
-                    show: false
-                }
-            },
-            colors: ['#13c2c2'],
-            plotOptions: {
-                bar: {
-                    columnWidth: '45%',
-                    borderRadius: 4
-                }
-            },
-            dataLabels: {
-                enabled: false
-            },
-            series: [
-                {
-                    data: [80, 95, 70, 42, 65, 55, 78]
-                }
-            ],
-            stroke: {
-                curve: 'smooth',
-                width: 2
-            },
-            xaxis: {
-                categories: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
-                axisBorder: {
-                    show: false
-                },
-                axisTicks: {
-                    show: false
-                }
-            },
-            yaxis: {
-                show: false
-            },
-            grid: {
-                show: false
-            }
-        };
-        this.chartOptions_5 = {
-            chart: {
-                type: 'line',
-                height: 340,
-                toolbar: {
-                    show: false
-                }
-            },
-            colors: ['#faad14'],
-            plotOptions: {
-                bar: {
-                    columnWidth: '45%',
-                    borderRadius: 4
-                }
-            },
-            stroke: {
-                curve: 'smooth',
-                width: 1.5
-            },
-            grid: {
-                strokeDashArray: 4
-            },
-            series: [
-                {
-                    data: [58, 90, 38, 83, 63, 75, 35, 55]
-                }
-            ],
-            xaxis: {
-                type: 'datetime',
-                categories: [
-                    '2018-05-19T00:00:00.000Z',
-                    '2018-06-19T00:00:00.000Z',
-                    '2018-07-19T01:30:00.000Z',
-                    '2018-08-19T02:30:00.000Z',
-                    '2018-09-19T03:30:00.000Z',
-                    '2018-10-19T04:30:00.000Z',
-                    '2018-11-19T05:30:00.000Z',
-                    '2018-12-19T06:30:00.000Z'
-                ],
-                labels: {
-                    format: 'MMM'
-                },
-                axisBorder: {
-                    show: false
-                },
-                axisTicks: {
-                    show: false
-                }
-            },
-            yaxis: {
-                show: false
-            }
-        };
         this.chartOptions_6 = {
             chart: {
                 type: 'bar',
@@ -170,7 +74,7 @@ export default class DashboardComponent implements OnInit {
             },
             plotOptions: {
                 bar: {
-                    columnWidth: '30%',
+                    columnWidth: '20%',
                     borderRadius: 4
                 }
             },
@@ -202,7 +106,7 @@ export default class DashboardComponent implements OnInit {
                     vertical: 5
                 }
             },
-            colors: ['#faad14', '#1890ff'],
+            colors: ['#A3D8FF', '#94FFD8'],
             series: [
                 {
                     name: 'Net Profit',
@@ -221,6 +125,7 @@ export default class DashboardComponent implements OnInit {
 
     // life cycle event
     ngOnInit(): void {
+        this.isLoading = true;
         this.dataFetcher.getDayData().subscribe(
             (data) => {
                 // refactor object to match to the VehicleType
@@ -235,12 +140,6 @@ export default class DashboardComponent implements OnInit {
                 this.checkPointData = newValues;
                 console.log(this.checkPointData);
 
-                setTimeout(() => {
-                    this.dayChart = new ApexCharts(document.querySelector('#day-chart'), this.dayOptions);
-                    console.log('chart data to render', this.dayChart);
-                    this.dayChart.render();
-                }, 500);
-
                 this.isLoading = false;
             },
             (error) => {
@@ -253,26 +152,78 @@ export default class DashboardComponent implements OnInit {
     // public method
     onNavChange(changeEvent: NgbNavChangeEvent) {
         if (changeEvent.nextId === 1) {
-            setTimeout(() => {
-                this.dayChart = new ApexCharts(document.querySelector('#day-chart'), this.dayOptions);
-                console.log(this.dayChart);
-                this.dayChart.render();
-            }, 200);
+            this.isLoading = true;
+            this.dataFetcher.getDayData().subscribe(
+                (data) => {
+                    // refactor object to match to the VehicleType
+                    const newValues = data.data.map((item) => {
+                        const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
+                        return {
+                            ...item,
+                            vehicle_type: findVehicle.la
+                        };
+                    });
+
+                    this.checkPointData = newValues;
+                    console.log(this.checkPointData);
+
+                    this.isLoading = false;
+                },
+                (error) => {
+                    this.isLoading = false;
+                    throw new Error(error);
+                }
+            );
         }
 
         if (changeEvent.nextId === 2) {
-            setTimeout(() => {
-                this.monthChart = new ApexCharts(document.querySelector('#week-chart'), this.weekOptions);
-                console.log('week chart', this.monthChart);
-                this.monthChart.render();
-            }, 200);
+            this.isLoading = true;
+            this.dataFetcher.getWeekData().subscribe(
+                (data) => {
+                    // refactor object to match to the VehicleType
+                    const newValues = data.data.map((item) => {
+                        const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
+                        return {
+                            ...item,
+                            vehicle_type: findVehicle.la
+                        };
+                    });
+
+                    this.checkPointData = newValues;
+                    console.log(this.checkPointData);
+
+                    this.isLoading = false;
+                },
+                (error) => {
+                    this.isLoading = false;
+                    throw new Error(error);
+                }
+            );
         }
 
         if (changeEvent.nextId === 3) {
-            setTimeout(() => {
-                this.monthChart = new ApexCharts(document.querySelector('#month-chart'), this.monthOptions);
-                this.monthChart.render();
-            }, 200);
+            this.isLoading = true;
+            this.dataFetcher.getMonthData().subscribe(
+                (data) => {
+                    // refactor object to match to the VehicleType
+                    const newValues = data.data.map((item) => {
+                        const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
+                        return {
+                            ...item,
+                            vehicle_type: findVehicle.la
+                        };
+                    });
+
+                    this.checkPointData = newValues;
+                    console.log(this.checkPointData);
+
+                    this.isLoading = false;
+                },
+                (error) => {
+                    this.isLoading = false;
+                    throw new Error(error);
+                }
+            );
         }
     }
 

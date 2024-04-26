@@ -2,10 +2,10 @@
  * Tabler Icons 1.41.1 by tabler - https://tabler.io
  * License - https://github.com/tabler/tabler-icons/blob/master/LICENSE
  */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@100..900&display=swap');
+
 @font-face {
     font-family: noto-sans-lao;
-    src: url('https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@100..900&display=swap');
+    src: url('./NotoSansLao.ttf') format('truetype');
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
@@ -37,7 +37,11 @@
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
     @font-face {
         font-family: noto-sans-lao;
-        src: url('https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@100..900&display=swap');
+        src: url('./NotoSansLao.ttf') format('truetype');
+        font-optical-sizing: auto;
+        font-weight: 400;
+        font-style: normal;
+        font-variation-settings: 'wdth' 100;
     }
 }
 .ti {
