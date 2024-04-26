@@ -40,26 +40,8 @@
             }
         }
 
-        <div class="col-md-12">
-            <h5 class="mb-3">Report</h5>
-            <div class="card">
-                <div class="card-body">
-                    <apx-chart
-                        [series]="chartOptions_6.series"
-                        [chart]="chartOptions_6.chart"
-                        [dataLabels]="chartOptions_6.dataLabels"
-                        [legend]="chartOptions_6.legend"
-                        [xaxis]="chartOptions_6.xaxis"
-                        [colors]="chartOptions_6.colors"
-                        [stroke]="chartOptions_6.stroke"
-                        [plotOptions]="chartOptions_6.plotOptions"
-                    ></apx-chart>
-                </div>
-            </div>
-        </div>
-
         <div class="col-md-12 col-xl-12">
-            <h5 class="mb-3">Recent Orders</h5>
+            <h4 class="mb-3">Recent Orders</h4>
             <div class="card tbl-card">
                 <div class="card-body">
                     <div class="table-responsive">
@@ -74,12 +56,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @for (task of tables; track task) {
+                                @for (task of tableData; track task) {
                                     <tr>
                                         <td>
                                             <a href="javascript:" class="text-muted">{{ task.id }}</a>
                                         </td>
-                                        <td>{{ task.name }}</td>
+                                        <td>{{ task.Vehicle_Type }}</td>
                                         <td class="text-end">{{ task.order }}</td>
                                         <td>
                                             <span class="px-4 d-block"><i class="{{ task.status_type }} m-r-5"></i>{{ task.status }}</span>

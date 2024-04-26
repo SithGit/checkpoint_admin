@@ -19,7 +19,7 @@ export function getWeekDateRange(): IDate {
     const date = new Date();
     date.setDate(date.getDate() - 7);
     const startDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-    date.setDate(date.getDate() + 7);
+    date.setDate(date.getDate() + 8);
     const endDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 
     return {
@@ -30,10 +30,10 @@ export function getWeekDateRange(): IDate {
 
 export function getMonthDateRange(): IDate {
     const date = new Date();
-    date.setMonth(date.getMonth() - 1);
-    const startDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-01`;
-    date.setMonth(date.getMonth() + 1);
-    const endDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-01`;
+    date.setDate(date.getDate() - 30);
+    const startDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    date.setDate(date.getDate() + 31);
+    const endDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 
     return {
         startDate,
