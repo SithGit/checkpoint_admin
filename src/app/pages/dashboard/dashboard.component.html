@@ -1,4 +1,20 @@
 <div class="row">
+    <div class="col-md-12">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <ul ngbNav aria-busy="true" #nav="ngbNav" class="nav-pills justify-content-end mb-0" (navChange)="onNavChange($event)">
+                <li [ngbNavItem]="1">
+                    <a ngbNavLink>Day</a>
+                </li>
+
+                <li [ngbNavItem]="2"><a ngbNavLink>Week</a></li>
+
+                <li [ngbNavItem]="3">
+                    <a ngbNavLink>Month</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
     <!-- [ sample-page ] start -->
     @if (!isLoading && checkPointData.length > 0) {
         @for (item of checkPointData; track item) {
