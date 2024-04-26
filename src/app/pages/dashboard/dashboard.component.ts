@@ -25,6 +25,8 @@ import {
 } from 'ng-apexcharts';
 import { DataFetcherService } from './dashboard.service';
 import { CheckPointData, ICheckPoint } from 'src/app/interfaces/arrival.interface';
+import { IVehicleType } from 'src/app/interfaces/vehicle.type';
+import { vehicles } from 'src/app/utils/vehicle.util';
 
 export type ChartOptions = {
     series: ApexAxisChartSeries;
@@ -48,6 +50,7 @@ export type ChartOptions = {
 })
 export default class DashboardComponent implements OnInit {
     checkPointData: CheckPointData[] = [];
+    vehicleType: IVehicleType[] = vehicles;
     isLoading = false;
     // public props
     @ViewChild('chart') chart: ChartComponent;
@@ -225,8 +228,17 @@ export default class DashboardComponent implements OnInit {
 
         this.dataFetcher.getData().subscribe(
             (data) => {
-                console.log('Fetched data ', data.data);
-                this.checkPointData = data.data;
+                // refactor object to match to the VehicleType
+                const newValues = data.data.map((item) => {
+                    const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
+                    return {
+                        ...item,
+                        vehicle_type: findVehicle.la
+                    };
+                });
+
+                this.checkPointData = newValues;
+                console.log(this.checkPointData);
                 this.isLoading = false;
             },
             (error) => {

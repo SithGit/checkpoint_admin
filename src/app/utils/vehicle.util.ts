@@ -1,4 +1,6 @@
-export const vehicles = [
+import { IVehicleType } from '../interfaces/vehicle.type';
+
+export const vehicles: IVehicleType[] = [
     { type: 'M', en: 'motorcycle', la: 'ລົດຈັກ', axles: 2, wheels: 2 },
     { type: 'A', en: 'passenger car', la: 'ລົດສວ່ນຕົວ', axles: 2, wheels: 4 },
     { type: 'C2', en: 'Minivan', la: 'ລົດຕູ້', axles: 2, wheels: 6 },
