@@ -18,6 +18,7 @@ export default class LoginComponent {
     public hasError: boolean = false;
     public onLoading: boolean = false;
     public errorMsg: string = 'Invalid username or password';
+    private apiUrl: string = 'http://202.137.134.162:3000';
 
     constructor(
         private http: HttpClient,
@@ -30,12 +31,23 @@ export default class LoginComponent {
         this.hasError = false;
         this.onLoading = true;
         this.http
-            .post('http://202.137.134.162:3000/api/authentication/login', this.loginObj)
+            .post(this.apiUrl + '/api/authentication/login', this.loginObj)
             .pipe(
                 map((res) => {
                     console.log('res', res);
                     if (res['accessToken']) {
                         localStorage.setItem('token', res['accessToken']);
+
+                        const setHeader = {
+                            headers: {
+                                Authorization: res['accessToken']
+                            }
+                        };
+
+                        this.http.post(this.apiUrl + '/api/authentication/get-user-data', {}, setHeader).subscribe((userData) => {
+                            console.log('userData', userData);
+                            localStorage.setItem('userData', JSON.stringify(userData));
+                        });
 
                         this.onLoading = false;
                         this.router.navigate(['/dashboard']);

@@ -1,6 +1,7 @@
 // angular import
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { IUser } from 'src/app/interfaces/user.interface';
 
 @Component({
     selector: 'app-nav-right',
@@ -8,6 +9,7 @@ import { Router } from '@angular/router';
     styleUrls: ['./nav-right.component.scss']
 })
 export class NavRightComponent {
+    public userData: IUser = JSON.parse(localStorage.getItem('userData'));
     // public method
     constructor(private router: Router) {}
 

@@ -3,7 +3,7 @@
     <li class="dropdown pc-h-item header-user-profile" ngbDropdown>
         <a class="pc-head-link dropdown-toggle arrow-none me-0" ngbDropdownToggle>
             <img src="assets/images/user/avatar-2.jpg" alt="user-image" class="user-avtar" />
-            <span>Tester</span>
+            <span>{{ userData.username.toUpperCase() }}</span>
         </a>
 
         <!-- dropdown menu of user profile -->
@@ -14,8 +14,8 @@
                         <img src="assets/images/user/avatar-2.jpg" alt="user-image" class="user-avtar wid-35" />
                     </div>
                     <div class="flex-grow-1 ms-3">
-                        <h6 class="mb-1">Stebin Ben</h6>
-                        <span>UI/UX Designer</span>
+                        <h6 class="mb-1">{{ userData.username }}</h6>
+                        <span>PHAKTAI Ltd,.</span>
                     </div>
                     <a (click)="onLogOut()" class="pc-head-link bg-transparent"
                         ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" class="bi bi-power" viewBox="0 0 16 16">
