@@ -8,10 +8,16 @@ import { getMonthDateRange, getTodayDateRange, getWeekDateRange } from 'src/app/
     providedIn: 'root'
 })
 export class DataFetcherService {
+    private startDateState: string = getTodayDateRange().startDate;
+    private endDateState: string = getTodayDateRange().endDate;
+
     constructor(private http: HttpClient) {}
 
     getDayData(): Observable<ICheckPoint> {
         const { startDate, endDate } = getTodayDateRange();
+
+        this.startDateState = startDate;
+        this.endDateState = endDate;
 
         console.log('startDate', startDate, 'endDate', endDate);
 
@@ -33,6 +39,8 @@ export class DataFetcherService {
     getWeekData(): Observable<ICheckPoint> {
         const { startDate, endDate } = getWeekDateRange();
         console.log('startDate', startDate, 'endDate', endDate);
+        this.startDateState = startDate;
+        this.endDateState = endDate;
 
         const getToken = localStorage.getItem('token');
 
@@ -52,6 +60,8 @@ export class DataFetcherService {
     getMonthData(): Observable<ICheckPoint> {
         const { startDate, endDate } = getMonthDateRange();
 
+        this.startDateState = startDate;
+        this.endDateState = endDate;
         console.log('startDate', startDate, endDate);
 
         const getToken = localStorage.getItem('token');

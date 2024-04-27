@@ -1,17 +1,14 @@
 // angular import
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-// project import
-import tableData from 'src/fake-data/default-data.json';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 
-// bootstrap import
 import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
 // third party
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { DataFetcherService } from './dashboard.service';
-import { CheckPointData } from 'src/app/interfaces/arrival.interface';
+import { CheckPointData, InnerCheckPoint } from 'src/app/interfaces/arrival.interface';
 import { IVehicleType } from 'src/app/interfaces/vehicle.type';
 import { vehicles } from 'src/app/utils/vehicle.util';
 import ApexCharts from 'apexcharts';
@@ -26,6 +23,7 @@ import { numberWithCommas } from 'src/app/utils/round-number.shared';
 })
 export default class DashboardComponent implements OnInit {
     checkPointData: CheckPointData[] | any = [];
+    dataSources: InnerCheckPoint[] = [];
     tableData: any = [];
     totalIncome: string = '0';
     totalPassedVehicle: string = '0';
@@ -41,6 +39,7 @@ export default class DashboardComponent implements OnInit {
         this.isLoading = true;
         this.dataFetcher.getDayData().subscribe(
             (data) => {
+                this.dataSources = data.sourceData;
                 // refactor object to match to the VehicleType
                 const newValues = data.data.map((item) => {
                     const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
@@ -530,5 +529,24 @@ export default class DashboardComponent implements OnInit {
                 }
             );
         }
+    }
+
+    csvExport() {
+        // let's using blob to export csv file with the existing data from dataSource
+        const csvData = this.checkPointData.map((item) => {
+            return `${item.vehicle_type},${item.count},${item.total}`;
+        });
+
+        const csvHeader = ['ປະເພດລົດ,ຈຳນວນລົດ,ລາຍຮັບ'];
+        csvHeader.push(...csvData);
+
+        const csvContent = csvHeader.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'check-point-data.csv';
+        a.click();
+        window.URL.revokeObjectURL(url);
     }
 }
