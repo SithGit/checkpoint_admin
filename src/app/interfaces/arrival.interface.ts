@@ -1,6 +1,5 @@
 export interface ICheckPoint {
     data: CheckPointData[];
-    sourceData: InnerCheckPoint[];
     count: number;
 }
 

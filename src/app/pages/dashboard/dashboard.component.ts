@@ -23,7 +23,7 @@ import { numberWithCommas } from 'src/app/utils/round-number.shared';
 })
 export default class DashboardComponent implements OnInit {
     checkPointData: CheckPointData[] | any = [];
-    dataSources: InnerCheckPoint[] = [];
+
     tableData: any = [];
     totalIncome: string = '0';
     totalPassedVehicle: string = '0';
@@ -39,7 +39,6 @@ export default class DashboardComponent implements OnInit {
         this.isLoading = true;
         this.dataFetcher.getDayData().subscribe(
             (data) => {
-                this.dataSources = data.sourceData;
                 // refactor object to match to the VehicleType
                 const newValues = data.data.map((item) => {
                     const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
