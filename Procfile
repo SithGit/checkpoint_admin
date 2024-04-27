@@ -1,1 +1,1 @@
-web: npm run build-pro
+web: npm run build
