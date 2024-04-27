@@ -89,17 +89,17 @@
                 <ul ngbNav aria-busy="true" #nav="ngbNav" class="nav-pills justify-content-end mb-0" (navChange)="onNavChange($event)">
                     <li [ngbNavItem]="1">
                         <ng-template ngbNavContent>
-                            <div id="visitor-chart"></div>
+                            <div id="visitor-chart-1"></div>
                         </ng-template>
                     </li>
                     <li [ngbNavItem]="2">
                         <ng-template ngbNavContent>
-                            <div id="visitor-chart-1"></div>
+                            <div id="visitor-chart-2"></div>
                         </ng-template>
                     </li>
                     <li [ngbNavItem]="3">
                         <ng-template ngbNavContent>
-                            <div id="visitor-chart-1"></div>
+                            <div id="visitor-chart-3"></div>
                         </ng-template>
                     </li>
                 </ul>
@@ -107,6 +107,26 @@
             <div class="card">
                 <div class="card-body">
                     <div [ngbNavOutlet]="nav"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <h5 class="mb-3">ລາຍງານລາຍໄດ້</h5>
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="mb-2 f-w-400 text-muted">ມູນຄ່າທັງໝົດ</h6>
+                    <h3 class="mb-0">{{ totalIncome }} ກີບ</h3>
+                    <apx-chart
+                        [series]="chartOptions.series"
+                        [chart]="chartOptions.chart"
+                        [dataLabels]="chartOptions.dataLabels"
+                        [legend]="chartOptions.legend"
+                        [xaxis]="chartOptions.xaxis"
+                        [colors]="chartOptions.colors"
+                        [stroke]="chartOptions.stroke"
+                        [plotOptions]="chartOptions.plotOptions"
+                    ></apx-chart>
                 </div>
             </div>
         </div>

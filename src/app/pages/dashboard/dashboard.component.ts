@@ -31,8 +31,9 @@ export default class DashboardComponent implements OnInit {
     totalPassedVehicle: string = '0';
     vehicleType: IVehicleType[] = vehicles;
     isLoading = false;
-
-    chartData: any;
+    chartOptions: any;
+    passedCarChartData: any;
+    revenueChartData: any;
 
     constructor(private dataFetcher: DataFetcherService) {}
 
@@ -63,6 +64,7 @@ export default class DashboardComponent implements OnInit {
                     }, 0)
                 );
 
+                // ---- chart data ----
                 const seriesData = [
                     {
                         name: 'ຂໍ້ມູນການຜ່ານເຂົ້າອອກຂອງລົດແຕ່ລະປະເພດ',
@@ -75,7 +77,7 @@ export default class DashboardComponent implements OnInit {
                     return findVehicle.la;
                 });
 
-                const Options = {
+                const passedCarOptions = {
                     chart: {
                         height: 450,
                         type: 'area',
@@ -97,11 +99,60 @@ export default class DashboardComponent implements OnInit {
                     }
                 };
 
-                console.log('series Data', seriesData);
+                // revenue series data
+                const revenueSeriesData = [
+                    {
+                        name: 'ລາຍຮັບທັງໝົດ',
+                        data: data.data.map((item) => {
+                            const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
+                            return item.count * findVehicle.price;
+                        })
+                    }
+                ];
+
+                this.chartOptions = {
+                    chart: {
+                        type: 'bar',
+                        height: 365,
+                        toolbar: {
+                            show: false
+                        }
+                    },
+                    colors: ['#8DECB4'],
+                    plotOptions: {
+                        bar: {
+                            columnWidth: '12%',
+                            borderRadius: 2
+                        }
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    series: revenueSeriesData,
+                    stroke: {
+                        curve: 'smooth',
+                        width: 2
+                    },
+                    xaxis: {
+                        categories: categories,
+                        axisBorder: {
+                            show: false
+                        },
+                        axisTicks: {
+                            show: false
+                        }
+                    },
+                    yaxis: {
+                        show: false
+                    },
+                    grid: {
+                        show: false
+                    }
+                };
 
                 setTimeout(() => {
-                    this.chartData = new ApexCharts(document.querySelector('#visitor-chart'), Options);
-                    this.chartData.render();
+                    this.passedCarChartData = new ApexCharts(document.querySelector('#visitor-chart-1'), passedCarOptions);
+                    this.passedCarChartData.render();
                 }, 500);
 
                 this.isLoading = false;
@@ -122,26 +173,39 @@ export default class DashboardComponent implements OnInit {
                     const newValues = data.data.map((item) => {
                         const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
                         return {
-                            ...item,
-                            vehicle_type: findVehicle.la
+                            vehicle_type: findVehicle.la,
+                            count: numberWithCommas(item.count),
+                            total: numberWithCommas(item.count * findVehicle.price)
                         };
                     });
 
                     this.checkPointData = newValues;
+                    this.totalIncome = numberWithCommas(
+                        data.data.reduce((acc, item) => {
+                            const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
+                            return acc + item.count * findVehicle.price;
+                        }, 0)
+                    );
+                    this.totalPassedVehicle = numberWithCommas(
+                        data.data.reduce((acc, item) => {
+                            return acc + item.count;
+                        }, 0)
+                    );
 
-                    console.log(this.checkPointData);
-
-                    // prepare data from api for thee chart, series data
+                    // ---- chart data ----
                     const seriesData = [
                         {
                             name: 'ຂໍ້ມູນການຜ່ານເຂົ້າອອກຂອງລົດແຕ່ລະປະເພດ',
-                            data: this.checkPointData.map((item) => item.count)
+                            data: data.data.map((item) => item.count)
                         }
                     ];
 
-                    const categories = newValues.map((item) => item.vehicle_type);
+                    const categories = data.data.map((item) => {
+                        const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
+                        return findVehicle.la;
+                    });
 
-                    const Options = {
+                    const passedCarOptions = {
                         chart: {
                             height: 450,
                             type: 'area',
@@ -152,7 +216,7 @@ export default class DashboardComponent implements OnInit {
                         dataLabels: {
                             enabled: false
                         },
-                        colors: ['#13c2c2'],
+                        colors: ['#FFC55A'],
                         series: seriesData,
                         stroke: {
                             curve: 'smooth',
@@ -163,11 +227,60 @@ export default class DashboardComponent implements OnInit {
                         }
                     };
 
-                    console.log('series Data', seriesData);
+                    // revenue series data
+                    const revenueSeriesData = [
+                        {
+                            name: 'ລາຍຮັບທັງໝົດ',
+                            data: data.data.map((item) => {
+                                const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
+                                return item.count * findVehicle.price;
+                            })
+                        }
+                    ];
+
+                    this.chartOptions = {
+                        chart: {
+                            type: 'bar',
+                            height: 365,
+                            toolbar: {
+                                show: false
+                            }
+                        },
+                        colors: ['#8DECB4'],
+                        plotOptions: {
+                            bar: {
+                                columnWidth: '12%',
+                                borderRadius: 2
+                            }
+                        },
+                        dataLabels: {
+                            enabled: false
+                        },
+                        series: revenueSeriesData,
+                        stroke: {
+                            curve: 'smooth',
+                            width: 2
+                        },
+                        xaxis: {
+                            categories: categories,
+                            axisBorder: {
+                                show: false
+                            },
+                            axisTicks: {
+                                show: false
+                            }
+                        },
+                        yaxis: {
+                            show: false
+                        },
+                        grid: {
+                            show: false
+                        }
+                    };
 
                     setTimeout(() => {
-                        this.chartData = new ApexCharts(document.querySelector('#visitor-chart'), Options);
-                        this.chartData.render();
+                        this.passedCarChartData = new ApexCharts(document.querySelector('#visitor-chart-1'), passedCarOptions);
+                        this.passedCarChartData.render();
                     }, 500);
 
                     this.isLoading = false;
@@ -187,25 +300,39 @@ export default class DashboardComponent implements OnInit {
                     const newValues = data.data.map((item) => {
                         const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
                         return {
-                            ...item,
-                            vehicle_type: findVehicle.la
+                            vehicle_type: findVehicle.la,
+                            count: numberWithCommas(item.count),
+                            total: numberWithCommas(item.count * findVehicle.price)
                         };
                     });
 
                     this.checkPointData = newValues;
+                    this.totalIncome = numberWithCommas(
+                        data.data.reduce((acc, item) => {
+                            const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
+                            return acc + item.count * findVehicle.price;
+                        }, 0)
+                    );
+                    this.totalPassedVehicle = numberWithCommas(
+                        data.data.reduce((acc, item) => {
+                            return acc + item.count;
+                        }, 0)
+                    );
 
-                    console.log(this.checkPointData);
-                    // prepare data from api for thee chart, series data
+                    // ---- chart data ----
                     const seriesData = [
                         {
                             name: 'ຂໍ້ມູນການຜ່ານເຂົ້າອອກຂອງລົດແຕ່ລະປະເພດ',
-                            data: this.checkPointData.map((item) => item.count)
+                            data: data.data.map((item) => item.count)
                         }
                     ];
 
-                    const categories = newValues.map((item) => item.vehicle_type);
+                    const categories = data.data.map((item) => {
+                        const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
+                        return findVehicle.la;
+                    });
 
-                    const Options = {
+                    const passedCarOptions = {
                         chart: {
                             height: 450,
                             type: 'area',
@@ -216,7 +343,7 @@ export default class DashboardComponent implements OnInit {
                         dataLabels: {
                             enabled: false
                         },
-                        colors: ['#13c2c2'],
+                        colors: ['#FFC55A'],
                         series: seriesData,
                         stroke: {
                             curve: 'smooth',
@@ -227,11 +354,60 @@ export default class DashboardComponent implements OnInit {
                         }
                     };
 
-                    console.log('series Data', seriesData);
+                    // revenue series data
+                    const revenueSeriesData = [
+                        {
+                            name: 'ລາຍຮັບທັງໝົດ',
+                            data: data.data.map((item) => {
+                                const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
+                                return item.count * findVehicle.price;
+                            })
+                        }
+                    ];
+
+                    this.chartOptions = {
+                        chart: {
+                            type: 'bar',
+                            height: 365,
+                            toolbar: {
+                                show: false
+                            }
+                        },
+                        colors: ['#8DECB4'],
+                        plotOptions: {
+                            bar: {
+                                columnWidth: '12%',
+                                borderRadius: 2
+                            }
+                        },
+                        dataLabels: {
+                            enabled: false
+                        },
+                        series: revenueSeriesData,
+                        stroke: {
+                            curve: 'smooth',
+                            width: 2
+                        },
+                        xaxis: {
+                            categories: categories,
+                            axisBorder: {
+                                show: false
+                            },
+                            axisTicks: {
+                                show: false
+                            }
+                        },
+                        yaxis: {
+                            show: false
+                        },
+                        grid: {
+                            show: false
+                        }
+                    };
 
                     setTimeout(() => {
-                        this.chartData = new ApexCharts(document.querySelector('#visitor-chart'), Options);
-                        this.chartData.render();
+                        this.passedCarChartData = new ApexCharts(document.querySelector('#visitor-chart-1'), passedCarOptions);
+                        this.passedCarChartData.render();
                     }, 500);
 
                     this.isLoading = false;
@@ -248,29 +424,43 @@ export default class DashboardComponent implements OnInit {
             this.dataFetcher.getMonthData().subscribe(
                 (data) => {
                     // refactor object to match to the VehicleType
+                    // refactor object to match to the VehicleType
                     const newValues = data.data.map((item) => {
                         const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
                         return {
-                            ...item,
-                            vehicle_type: findVehicle.la
+                            vehicle_type: findVehicle.la,
+                            count: numberWithCommas(item.count),
+                            total: numberWithCommas(item.count * findVehicle.price)
                         };
                     });
 
                     this.checkPointData = newValues;
+                    this.totalIncome = numberWithCommas(
+                        data.data.reduce((acc, item) => {
+                            const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
+                            return acc + item.count * findVehicle.price;
+                        }, 0)
+                    );
+                    this.totalPassedVehicle = numberWithCommas(
+                        data.data.reduce((acc, item) => {
+                            return acc + item.count;
+                        }, 0)
+                    );
 
-                    console.log(this.checkPointData);
-
-                    // prepare data from api for thee chart, series data
+                    // ---- chart data ----
                     const seriesData = [
                         {
                             name: 'ຂໍ້ມູນການຜ່ານເຂົ້າອອກຂອງລົດແຕ່ລະປະເພດ',
-                            data: this.checkPointData.map((item) => item.count)
+                            data: data.data.map((item) => item.count)
                         }
                     ];
 
-                    const categories = newValues.map((item) => item.vehicle_type);
+                    const categories = data.data.map((item) => {
+                        const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
+                        return findVehicle.la;
+                    });
 
-                    const Options = {
+                    const passedCarOptions = {
                         chart: {
                             height: 450,
                             type: 'area',
@@ -281,7 +471,7 @@ export default class DashboardComponent implements OnInit {
                         dataLabels: {
                             enabled: false
                         },
-                        colors: ['#13c2c2'],
+                        colors: ['#FFC55A'],
                         series: seriesData,
                         stroke: {
                             curve: 'smooth',
@@ -292,11 +482,44 @@ export default class DashboardComponent implements OnInit {
                         }
                     };
 
-                    console.log('series Data', seriesData);
+                    // revenue series data
+                    const revenueSeriesData = [
+                        {
+                            name: 'ລາຍຮັບທັງໝົດ',
+                            data: data.data.map((item) => {
+                                const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
+                                return item.count * findVehicle.price;
+                            })
+                        }
+                    ];
+
+                    const revenueOptions = {
+                        chart: {
+                            height: 450,
+                            type: 'area',
+                            toolbar: {
+                                show: false
+                            }
+                        },
+                        dataLabels: {
+                            enabled: false
+                        },
+                        colors: ['#C65BCF'],
+                        series: revenueSeriesData,
+                        stroke: {
+                            curve: 'smooth',
+                            width: 2
+                        },
+                        xaxis: {
+                            categories: categories
+                        }
+                    };
 
                     setTimeout(() => {
-                        this.chartData = new ApexCharts(document.querySelector('#visitor-chart'), Options);
-                        this.chartData.render();
+                        this.passedCarChartData = new ApexCharts(document.querySelector('#visitor-chart-3'), passedCarOptions);
+                        this.passedCarChartData.render();
+                        this.revenueChartData = new ApexCharts(document.querySelector('#revenue-chart-3'), revenueOptions);
+                        this.revenueChartData.render();
                     }, 500);
 
                     this.isLoading = false;

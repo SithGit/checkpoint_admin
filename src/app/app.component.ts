@@ -8,4 +8,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
     title = 'PHAKTAI Ltd. | Admin Dashboard';
+
+    constructor() {
+        console.log('App component loaded');
+    }
 }
