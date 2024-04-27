@@ -1,11 +1,19 @@
 export interface ICheckPoint {
     data: CheckPointData[];
+    sourceData: InnerCheckPoint[];
+    count: number;
 }
 
 export interface CheckPointData {
     vehicle_type: string;
     count: number;
     data: InnerCheckPoint[];
+}
+
+export interface CheckPointDisplayData {
+    vehicle_type: string;
+    count: string;
+    total: string;
 }
 
 export interface InnerCheckPoint {

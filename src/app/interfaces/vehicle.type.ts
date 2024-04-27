@@ -4,4 +4,5 @@ export interface IVehicleType {
     la: string;
     axles: number | string;
     wheels: number | string;
+    price: number;
 }
