@@ -49,8 +49,15 @@ export default class LoginComponent {
                             localStorage.setItem('userData', JSON.stringify(userData));
                         });
 
-                        this.onLoading = false;
-                        this.router.navigate(['/dashboard']);
+                        const getUserData = localStorage.getItem('userData');
+
+                        if (getUserData) {
+                            this.onLoading = false;
+                            this.router.navigate(['/dashboard']);
+                        } else {
+                            this.hasError = true;
+                            this.onLoading = false;
+                        }
                     }
                 }),
                 catchError((error) => {
