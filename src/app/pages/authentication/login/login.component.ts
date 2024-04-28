@@ -18,7 +18,7 @@ export default class LoginComponent {
     public hasError: boolean = false;
     public onLoading: boolean = false;
     public errorMsg: string = 'Invalid username or password';
-    private apiUrl: string = 'http://202.137.134.162:3000';
+    private apiUrl: string = 'https://a9d6-202-137-134-162.ngrok-free.app';
 
     constructor(
         private http: HttpClient,
@@ -36,8 +36,6 @@ export default class LoginComponent {
                 map((res) => {
                     console.log('res', res);
                     if (res['accessToken']) {
-                        localStorage.setItem('token', res['accessToken']);
-
                         const setHeader = {
                             headers: {
                                 Authorization: res['accessToken']
@@ -46,6 +44,7 @@ export default class LoginComponent {
 
                         this.http.post(this.apiUrl + '/api/authentication/get-user-data', {}, setHeader).subscribe((userData) => {
                             console.log('userData', userData);
+                            localStorage.setItem('token', res['accessToken']);
                             localStorage.setItem('userData', JSON.stringify(userData));
                         });
 

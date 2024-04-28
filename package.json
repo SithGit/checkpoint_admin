@@ -28,6 +28,7 @@
         "@ng-bootstrap/ng-bootstrap": "^16.0.0",
         "@popperjs/core": "^2.11.8",
         "apexcharts": "^3.49.0",
+        "axios": "^1.6.8",
         "bootstrap": "^5.3.3",
         "fast-csv": "^5.0.1",
         "ng-apexcharts": "^1.10.0",

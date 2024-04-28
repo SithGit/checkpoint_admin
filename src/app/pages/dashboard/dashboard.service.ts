@@ -10,7 +10,7 @@ import { getMonthDateRange, getTodayDateRange, getWeekDateRange } from 'src/app/
 export class DataFetcherService {
     private startDateState: string = getTodayDateRange().startDate;
     private endDateState: string = getTodayDateRange().endDate;
-
+    private apiUrl: string = 'https://a9d6-202-137-134-162.ngrok-free.app';
     constructor(private http: HttpClient) {}
 
     getDayData(): Observable<ICheckPoint> {
@@ -33,7 +33,7 @@ export class DataFetcherService {
             }
         };
 
-        return this.http.get<ICheckPoint>(`http://202.137.134.162:3000/api/Reports/get-all-check-point?startDate=${startDate}&endDate=${endDate}`, setHeader);
+        return this.http.get<ICheckPoint>(`${this.apiUrl}/api/Reports/get-all-check-point?startDate=${startDate}&endDate=${endDate}`, setHeader);
     }
 
     getWeekData(): Observable<ICheckPoint> {
@@ -54,7 +54,7 @@ export class DataFetcherService {
             }
         };
 
-        return this.http.get<ICheckPoint>(`http://202.137.134.162:3000/api/Reports/get-all-check-point?startDate=${startDate}&endDate=${endDate}`, setHeader);
+        return this.http.get<ICheckPoint>(`${this.apiUrl}/api/Reports/get-all-check-point?startDate=${startDate}&endDate=${endDate}`, setHeader);
     }
 
     getMonthData(): Observable<ICheckPoint> {
@@ -76,6 +76,6 @@ export class DataFetcherService {
             }
         };
 
-        return this.http.get<ICheckPoint>(`http://202.137.134.162:3000/api/Reports/get-all-check-point?startDate=${startDate}&endDate=${endDate}`, setHeader);
+        return this.http.get<ICheckPoint>(`${this.apiUrl}/api/Reports/get-all-check-point?startDate=${startDate}&endDate=${endDate}`, setHeader);
     }
 }
