@@ -1,0 +1,13 @@
+version: "3.9" # Specify the Docker Compose version
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80" # Map container port 80 to host port 80
+      - "443:443" # Map container port 443 to host port 443 (for SSL)
+    restart: unless-stopped # Restart container on system reboot
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d # Mount your configuration directory
+      - ./nginx/certs:/etc/nginx/ssl # Optional: Mount your SSL certificates directory (if using)
+
