@@ -18,7 +18,7 @@ export default class LoginComponent {
     public hasError: boolean = false;
     public onLoading: boolean = false;
     public errorMsg: string = 'Invalid username or password';
-    private apiUrl: string = 'https:/api.ptlao.com';
+    private apiUrl: string = 'https://api.ptlao.com';
 
     constructor(
         private http: HttpClient,

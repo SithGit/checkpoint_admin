@@ -10,7 +10,7 @@ import { getMonthDateRange, getTodayDateRange, getWeekDateRange } from 'src/app/
 export class DataFetcherService {
     private startDateState: string = getTodayDateRange().startDate;
     private endDateState: string = getTodayDateRange().endDate;
-    private apiUrl: string = 'https:/api.ptlao.com';
+    private apiUrl: string = 'https://api.ptlao.com';
 
     constructor(private http: HttpClient) {}
 
