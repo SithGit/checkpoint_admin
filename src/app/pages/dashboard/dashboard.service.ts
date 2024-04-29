@@ -10,7 +10,8 @@ import { getMonthDateRange, getTodayDateRange, getWeekDateRange } from 'src/app/
 export class DataFetcherService {
     private startDateState: string = getTodayDateRange().startDate;
     private endDateState: string = getTodayDateRange().endDate;
-    private apiUrl: string = 'https://a9d6-202-137-134-162.ngrok-free.app';
+    private apiUrl: string = 'https:/api.ptlao.com';
+
     constructor(private http: HttpClient) {}
 
     getDayData(): Observable<ICheckPoint> {

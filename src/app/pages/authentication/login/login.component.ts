@@ -18,7 +18,7 @@ export default class LoginComponent {
     public hasError: boolean = false;
     public onLoading: boolean = false;
     public errorMsg: string = 'Invalid username or password';
-    private apiUrl: string = 'https://a9d6-202-137-134-162.ngrok-free.app';
+    private apiUrl: string = 'https:/api.ptlao.com';
 
     constructor(
         private http: HttpClient,
