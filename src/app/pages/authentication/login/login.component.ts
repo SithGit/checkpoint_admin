@@ -44,13 +44,13 @@ export default class LoginComponent {
 
                         this.http.post(this.apiUrl + '/api/authentication/get-user-data', {}, setHeader).subscribe((userData) => {
                             console.log('userData', userData);
-                            localStorage.setItem('token', res['accessToken']);
                             localStorage.setItem('userData', JSON.stringify(userData));
                         });
 
                         const getUserData = localStorage.getItem('userData');
 
                         if (getUserData) {
+                            localStorage.setItem('token', res['accessToken']);
                             this.onLoading = false;
                             this.router.navigate(['/dashboard']);
                         } else {
