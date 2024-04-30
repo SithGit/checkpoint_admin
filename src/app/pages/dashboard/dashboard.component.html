@@ -1,26 +1,96 @@
 <div class="row">
-    <div class="col-md-12">
-        <div class="d-flex align-items-center justify-content-between mb-3">
-            <ul ngbNav aria-busy="true" #nav="ngbNav" class="nav-pills justify-content-end mb-0" (navChange)="onNavChange($event)">
-                <li [ngbNavItem]="1">
-                    <a ngbNavLink>ມື້</a>
-                </li>
+    <div class="col d-flex align-items-center justify-content-between" style="padding: 20px">
+        <form class="row row-cols-sm-auto">
+            <div class="col-6">
+                <div class="dp-hidden position-absolute">
+                    <div class="input-group">
+                        <input
+                            name="datepicker"
+                            class="form-control"
+                            ngbDatepicker
+                            #datepicker="ngbDatepicker"
+                            [minDate]="minDate"
+                            [maxDate]="maxDate"
+                            [markDisabled]="isDisabled"
+                            [autoClose]="'outside'"
+                            (dateSelect)="onDateSelection($event)"
+                            [displayMonths]="1"
+                            [dayTemplate]="t"
+                            outsideDays="hidden"
+                            [startDate]="fromDate!"
+                            tabindex="-1"
+                            navigation="none"
+                        />
+                        <ng-template #t let-date let-focused="focused">
+                            <span
+                                class="custom-day"
+                                [class.focused]="focused"
+                                [class.range]="isRange(date)"
+                                [class.faded]="isHovered(date) || isInside(date)"
+                                (mouseenter)="hoveredDate = date"
+                                (mouseleave)="hoveredDate = null"
+                            >
+                                {{ date.day }}
+                            </span>
+                        </ng-template>
+                    </div>
+                </div>
 
-                <li [ngbNavItem]="2">
-                    <a ngbNavLink>ອາທິດ</a>
-                </li>
+                <div class="input-group">
+                    <input
+                        #dpFromDate
+                        class="form-control"
+                        placeholder="yyyy-mm-dd"
+                        name="dpFromDate"
+                        disabled
+                        [value]="formatter.format(fromDate)"
+                        (input)="fromDate = validateInput(fromDate, dpFromDate.value)"
+                    />
 
-                <li [ngbNavItem]="3">
-                    <a ngbNavLink>ເດືອນ</a>
-                </li>
-            </ul>
+                    <input
+                        #dpToDate
+                        class="form-control"
+                        placeholder="yyyy-mm-dd"
+                        name="dpToDate"
+                        disabled
+                        [value]="formatter.format(toDate)"
+                        (input)="toDate = validateInput(toDate, dpToDate.value)"
+                    />
+                    <button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button"
+                        ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#fd7e14" class="bi bi-calendar-week" viewBox="0 0 16 16">
+                            <path
+                                d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"
+                            />
+                            <path
+                                d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"
+                            /></svg
+                    ></button>
+                </div>
+            </div>
 
-            <button class="btn btn-primary" (click)="csvExport()">
-                <i class="feather icon-refresh-cw"></i>
-                ດາວໂຫຼດຂໍ້ມູນ
-            </button>
-        </div>
+            <div class="col-3">
+                <button class="btn btn-primary" style="padding: 10px" placement="bottom" ngbTooltip="ຄົ້ນຫາ" (click)="fetchDataOnDateRange()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path
+                            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
+                        />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="col-3 d-flex justify-content-end">
+                <button class="btn btn-primary" (click)="csvExport()" style="padding: 10px" placement="bottom" ngbTooltip="ດາວໂຫຼດຂໍ້ມູນ">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
+                        <path
+                            fill-rule="evenodd"
+                            d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5M8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6"
+                        />
+                    </svg>
+                </button>
+            </div>
+        </form>
     </div>
+
     @if (isLoading) {
         <app-spinner></app-spinner>
     } @else {
@@ -86,7 +156,7 @@
         <div class="col-md-12">
             <div class="d-flex align-items-center justify-content-between mb-3">
                 <h5 class="mb-0">ລາຍງານລົດທີ່ຜ່ານ</h5>
-                <ul ngbNav aria-busy="true" #nav="ngbNav" class="nav-pills justify-content-end mb-0" (navChange)="onNavChange($event)">
+                <ul ngbNav aria-busy="true" #nav="ngbNav" class="nav-pills justify-content-end mb-0">
                     <li [ngbNavItem]="1">
                         <ng-template ngbNavContent>
                             <div id="visitor-chart-1"></div>
