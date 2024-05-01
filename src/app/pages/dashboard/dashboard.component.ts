@@ -8,7 +8,7 @@ import { NgbCalendar, NgbDate, NgbDateParserFormatter, NgbDateStruct, NgbNavChan
 // third party
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { DataFetcherService } from './dashboard.service';
-import { CheckPointData, InnerCheckPoint } from 'src/app/interfaces/arrival.interface';
+import { CheckPointData } from 'src/app/interfaces/arrival.interface';
 import { IVehicleType } from 'src/app/interfaces/vehicle.type';
 import { vehicles } from 'src/app/utils/vehicle.util';
 import ApexCharts from 'apexcharts';
@@ -23,6 +23,7 @@ import { numberWithCommas } from 'src/app/utils/round-number.shared';
 })
 export default class DashboardComponent implements OnInit {
     checkPointData: CheckPointData[] | any = [];
+    csvData: CheckPointData[] = [];
 
     tableData: any = [];
     totalIncome: string = '0';
@@ -63,6 +64,7 @@ export default class DashboardComponent implements OnInit {
         this.dataFetcher.getData(startDate, endDate).subscribe(
             (data) => {
                 console.log('fetchDataOnDateRange -->> ', data.data);
+                this.csvData = data.data;
                 // refactor object to match to the VehicleType
                 const newValues = data.data.map((item) => {
                     const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
@@ -219,12 +221,20 @@ export default class DashboardComponent implements OnInit {
     isDisabled = (date: NgbDate, current: { month: number }) => date.month !== current.month;
 
     csvExport() {
-        // let's using blob to export csv file with the existing data from dataSource
-        const csvData = this.checkPointData.map((item) => {
-            return `${item.vehicle_type},${item.count},${item.total}`;
+        // get filename with current date format like PTL-2021-09-01.csv
+        const today = new Date();
+        const filename = `PTL-${Date.now()}.csv`;
+
+        const csvData = this.csvData.map((item, index: number) => {
+            const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
+            const total = item.count * findVehicle.price;
+
+            return `${index + 1},${findVehicle.la},${item.count},${total}`;
         });
 
-        const csvHeader = ['ປະເພດລົດ,ຈຳນວນລົດ,ລາຍຮັບ'];
+        const newHeader = vehicles.map((item, index) => item.price);
+
+        const csvHeader = ['Date', ...newHeader.concat(newHeader)];
         csvHeader.push(...csvData);
 
         const csvContent = csvHeader.join('\n');
@@ -232,7 +242,7 @@ export default class DashboardComponent implements OnInit {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'check-point-data.csv';
+        a.download = filename;
         a.click();
         window.URL.revokeObjectURL(url);
     }
