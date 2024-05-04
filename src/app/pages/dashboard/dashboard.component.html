@@ -11,15 +11,16 @@
                             #datepicker="ngbDatepicker"
                             [minDate]="minDate"
                             [maxDate]="maxDate"
-                            [markDisabled]="isDisabled"
-                            [autoClose]="'outside'"
+                            [autoClose]="'true'"
                             (dateSelect)="onDateSelection($event)"
                             [displayMonths]="1"
                             [dayTemplate]="t"
                             outsideDays="hidden"
                             [startDate]="fromDate!"
                             tabindex="-1"
-                            navigation="none"
+                            [showWeekNumbers]="true"
+                            [markDisabled]="isDisabled"
+                            navigation="arrows"
                         />
                         <ng-template #t let-date let-focused="focused">
                             <span

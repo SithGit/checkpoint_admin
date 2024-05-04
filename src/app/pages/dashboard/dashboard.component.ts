@@ -41,8 +41,9 @@ export default class DashboardComponent implements OnInit {
     maxDate: NgbDateStruct;
 
     hoveredDate: NgbDate | null = null;
-    fromDate: NgbDate | null = this.calendar.getPrev(this.calendar.getToday(), 'd', 1);
+    fromDate: NgbDate | null = this.calendar.getPrev(this.calendar.getToday(), 'd', 0);
     toDate: NgbDate | null = this.calendar.getNext(this.calendar.getToday(), 'd', 0);
+    isDisabled = (date: NgbDate, current: { month: number }) => date.month !== current.month;
 
     constructor(private dataFetcher: DataFetcherService) {
         const today = new Date();
@@ -61,10 +62,20 @@ export default class DashboardComponent implements OnInit {
         console.log('from --->> ', startDate, 'to --->> ', endDate);
 
         this.isLoading = true;
+        this.dataFetcher.getCSVData(startDate, endDate).subscribe(
+            (data) => {
+                this.csvData = data.data;
+                console.log('csvData -->> ', this.csvData);
+            },
+            (error) => {
+                this.isLoading = false;
+                throw new Error(error);
+            }
+        );
+
         this.dataFetcher.getData(startDate, endDate).subscribe(
             (data) => {
                 console.log('fetchDataOnDateRange -->> ', data.data);
-                this.csvData = data.data;
                 // refactor object to match to the VehicleType
                 const newValues = data.data.map((item) => {
                     const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
@@ -218,26 +229,34 @@ export default class DashboardComponent implements OnInit {
         return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
     }
 
-    isDisabled = (date: NgbDate, current: { month: number }) => date.month !== current.month;
-
     csvExport() {
         // get filename with current date format like PTL-2021-09-01.csv
-        const today = new Date();
-        const filename = `PTL-${Date.now()}.csv`;
+        const today = Date.now();
+        const filename = `PTL-${today}.csv`;
 
         const csvData = this.csvData.map((item, index: number) => {
             const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
             const total = item.count * findVehicle.price;
 
-            return `${index + 1},${findVehicle.la},${item.count},${total}`;
+            const sumAmount = numberWithCommas(total);
+            const countAmount = numberWithCommas(item.count);
+            const totalSumAmount = numberWithCommas(total);
+            const totalSumCount = numberWithCommas(item.count);
+            const totalCountAmount = numberWithCommas(item.count);
+
+            // Adjust the return statement to match the structure of your data
+            return `${new Date()},${sumAmount},${countAmount},${totalSumAmount},${totalCountAmount},${today.toString()},${vehicles[0].price},${vehicles[1].price},${vehicles[3].price},${vehicles[4].price},${vehicles[5].price},${vehicles[6].price},${vehicles[7]},${vehicles[8].price},${vehicles[9].price},${vehicles[10].price},${vehicles[11].price},${vehicles[12].price},${vehicles[1].price},${vehicles[6].price},${vehicles[8].price},${vehicles[13].price},${vehicles[1].price},${vehicles[3].price},${vehicles[4].price},${vehicles[5].price},${vehicles[6].price},${vehicles[7]},${vehicles[8].price},${vehicles[9].price},${vehicles[10].price},${vehicles[11].price},${vehicles[12].price},${vehicles[1].price},${vehicles[6].price},${vehicles[8].price}`;
         });
 
-        const newHeader = vehicles.map((item, index) => item.price);
+        const csvHeader = [
+            'Data, Amount,Sum - Amount,Count - Amount,Total Sum - Amount,Total Count - Amount,Date,15.000,20.000,25.000,30.000,35.000,40.000,45.000,50.000,100.000,115.000,120.000,125.000,200.000,400.000,500.000,15.000,20.000,25.000,30.000,35.000,40.000,45.000,50.000,100.000,115.000,120.000,125.000,200.000,400.000,500.000'
+        ];
 
-        const csvHeader = ['Date', ...newHeader.concat(newHeader)];
         csvHeader.push(...csvData);
 
         const csvContent = csvHeader.join('\n');
+
+        console.log('csvContent -->> ', csvContent);
         const blob = new Blob([csvContent], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
