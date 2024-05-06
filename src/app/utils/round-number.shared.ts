@@ -6,3 +6,7 @@ export function numberWithCommasAndRounding(x: number, base = 500): string {
 export function numberWithCommas(x: number): string {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
+
+export function numberWithFullStop(x: number): string {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}

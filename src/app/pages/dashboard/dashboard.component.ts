@@ -15,10 +15,11 @@ import { CheckPointData } from 'src/app/interfaces/arrival.interface';
 import { IVehicleType } from 'src/app/interfaces/vehicle.type';
 import { vehicles } from 'src/app/utils/vehicle.util';
 import ApexCharts from 'apexcharts';
-import { numberWithCommas } from 'src/app/utils/round-number.shared';
+import { numberWithCommas, numberWithFullStop } from 'src/app/utils/round-number.shared';
 import { FormControl, FormGroup } from '@angular/forms';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { CustomDateAdapter } from './custom-adapter';
+import { ICSVData } from 'src/app/interfaces/csv.interface';
 
 const MY_DATE_FORMATS = {
     parse: {
@@ -41,12 +42,11 @@ const MY_DATE_FORMATS = {
     providers: [
         { provide: DateAdapter, useClass: CustomDateAdapter, deps: [MAT_DATE_LOCALE] },
         { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS }
-        // provideNativeDateAdapter()
     ]
 })
 export default class DashboardComponent implements OnInit {
     checkPointData: CheckPointData[] | any = [];
-    csvData: CheckPointData[] = [];
+    csvData: ICSVData;
 
     tableData: any = [];
     totalIncome: string = '0';
@@ -96,7 +96,7 @@ export default class DashboardComponent implements OnInit {
         this.isLoading = true;
         this.dataFetcher.getCSVData(this.fromDate, this.toDate).subscribe(
             (data) => {
-                this.csvData = data.data;
+                this.csvData = data;
                 console.log('csvData -->> ', this.csvData);
             },
             (error) => {
@@ -232,39 +232,137 @@ export default class DashboardComponent implements OnInit {
     }
 
     csvExport() {
-        // get filename with current date format like PTL-2021-09-01.csv
-        const today = Date.now();
+        // Get filename with current date format
+        const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
         const filename = `PTL-${today}.csv`;
 
-        const csvData = this.csvData.map((item, index: number) => {
-            const findVehicle = this.vehicleType.find((v) => v.type === item.vehicle_type);
-            const total = item.count * findVehicle.price;
-
-            const sumAmount = numberWithCommas(total);
-            const countAmount = numberWithCommas(item.count);
-            const totalSumAmount = numberWithCommas(total);
-            const totalSumCount = numberWithCommas(item.count);
-            const totalCountAmount = numberWithCommas(item.count);
-
-            // Adjust the return statement to match the structure of your data
-            return `${new Date()},${sumAmount},${countAmount},${totalSumAmount},${totalCountAmount},${today.toString()},${vehicles[0].price},${vehicles[1].price},${vehicles[3].price},${vehicles[4].price},${vehicles[5].price},${vehicles[6].price},${vehicles[7]},${vehicles[8].price},${vehicles[9].price},${vehicles[10].price},${vehicles[11].price},${vehicles[12].price},${vehicles[1].price},${vehicles[6].price},${vehicles[8].price},${vehicles[13].price},${vehicles[1].price},${vehicles[3].price},${vehicles[4].price},${vehicles[5].price},${vehicles[6].price},${vehicles[7]},${vehicles[8].price},${vehicles[9].price},${vehicles[10].price},${vehicles[11].price},${vehicles[12].price},${vehicles[1].price},${vehicles[6].price},${vehicles[8].price}`;
+        const headerName = this.csvData.data.map((item) => {
+            return item.vehicle_type_count.map((v) => v.vehicle_type);
         });
 
+        // Generate CSV header
         const csvHeader = [
-            'Data, Amount,Sum - Amount,Count - Amount,Total Sum - Amount,Total Count - Amount,Date,15.000,20.000,25.000,30.000,35.000,40.000,45.000,50.000,100.000,115.000,120.000,125.000,200.000,400.000,500.000,15.000,20.000,25.000,30.000,35.000,40.000,45.000,50.000,100.000,115.000,120.000,125.000,200.000,400.000,500.000'
+            'ວັນທີ',
+            '0',
+            headerName,
+            'total',
+            '0',
+            '15.000',
+            '20.000',
+            '25.000',
+            '30.000',
+            '40.000',
+            '50.000',
+            '100.000',
+            '200.000',
+            '500.000',
+            'count',
+            'Sum Amount',
+            'totalCountAmount'
         ];
 
-        csvHeader.push(...csvData);
+        console.log('csvHeader -->> ', csvHeader);
 
-        const csvContent = csvHeader.join('\n');
+        // Generate CSV content
+        const csvContent = this.csvData.data.map((day) => {
+            const { date, total_count, total_each, vehicle_type_count, vehicle_type_price } = day;
+
+            // need the result to be like this 0, 15000, 20000, 25000, 30000, 40000, 50000, 100000, 200000, 500000
+            const vehicleTypePrice = vehicle_type_price.reduce((acc, v) => {
+                return `${acc},${numberWithFullStop(v.total_price)}`;
+            }, '');
+
+            // need the result to be like this 0, 15000, 20000, 25000, 30000, 40000, 50000, 100000, 200000, 500000
+            const vehicleTypeCount = vehicle_type_count.reduce((acc, v) => {
+                return `${acc},${numberWithFullStop(v.count)}`;
+            }, '');
+
+            return `${date}${vehicleTypePrice},${total_each}${vehicleTypeCount},${total_count},${this.csvData.total_summarize},${this.csvData.total_vehicle_type_count}`;
+        });
 
         console.log('csvContent -->> ', csvContent);
-        const blob = new Blob([csvContent], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        a.click();
-        window.URL.revokeObjectURL(url);
+
+        // // Combine header and content
+        // csvContent.unshift(csvHeader.join(','));
+        // const finalCsvContent = csvContent.join('\n');
+        // console.log('finalCsvContent -->> ', finalCsvContent);
+
+        // // Create Blob and download
+        // const blob = new Blob([finalCsvContent], { type: 'text/csv' });
+        // const url = window.URL.createObjectURL(blob);
+        // const link = document.createElement('a');
+        // link.href = url;
+        // link.download = filename;
+        // link.click();
+        // window.URL.revokeObjectURL(url);
     }
+
+    // csvExport() {
+    //     // get filename with current date format like PTL-2021-09-01.csv
+    //     const today = Date.now();
+    //     const filename = `PTL-${today}.csv`;
+
+    //     const newCsvData = this.csvData.data.map((item) => {
+    //         const vehicleTypeCount = item.vehicle_type_count.reduce((acc, v) => {
+    //             return `${v.count}`;
+    //         }, '');
+
+    //         const vehicleTypePrice = item.vehicle_type_price.reduce((acc, v) => {
+    //             return `${v.total_price}`;
+    //         }, '');
+
+    //         return `${item.date},
+    //         ${vehicleTypePrice},
+    //         ${item.total_each},
+    //         ${vehicleTypeCount},
+    //         ${item.total_each}
+    //         ${this.csvData.total_summarize},
+    //         ${this.csvData.total_vehicle_type_count}`;
+    //     });
+
+    //     console.log('csvData -->> ', newCsvData);
+
+    //     if (newCsvData.length > 0) {
+    //         const csvHeader = [
+    //             `Date,
+    //             0,
+    //             15000,
+    //             20000,
+    //             25000,
+    //             30000,
+    //             40000,
+    //             50000,
+    //             100000,
+    //             200000,
+    //             500000,
+    //             total,
+    //             0,
+    //             15000,
+    //             20000,
+    //             25000,
+    //             30000,
+    //             40000,
+    //             50000,
+    //             100000,
+    //             200000,
+    //             500000,
+    //             total,
+    //             totalSumAmount,
+    //             totalCountAmount`
+    //         ];
+
+    //         csvHeader.push(...newCsvData);
+
+    //         const csvContent = csvHeader.join('\n');
+
+    //         console.log('csvContent -->> ', csvContent);
+    //         const blob = new Blob([csvContent], { type: 'text/csv' });
+    //         const url = window.URL.createObjectURL(blob);
+    //         const a = document.createElement('a');
+    //         a.href = url;
+    //         a.download = filename;
+    //         a.click();
+    //         window.URL.revokeObjectURL(url);
+    //     }
+    // }
 }

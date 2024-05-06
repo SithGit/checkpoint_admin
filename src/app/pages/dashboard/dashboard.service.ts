@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ICheckPoint } from 'src/app/interfaces/arrival.interface';
 import { getDateRange } from 'src/app/utils/get-date.util';
+import { ICSVData } from 'src/app/interfaces/csv.interface';
 
 @Injectable({
     providedIn: 'root'
@@ -32,7 +33,7 @@ export class DataFetcherService {
         return this.http.get<ICheckPoint>(`${this.apiUrl}/api/Reports/get-all-check-point?startDate=${startDate}&endDate=${endDate}`, setHeader);
     }
 
-    getCSVData(fromDate: string, toDate: string): Observable<ICheckPoint> {
+    getCSVData(fromDate: string, toDate: string): Observable<ICSVData> {
         const { startDate, endDate } = getDateRange(fromDate, toDate);
 
         console.log('changed date', startDate, endDate);
@@ -49,6 +50,6 @@ export class DataFetcherService {
             }
         };
 
-        return this.http.get<ICheckPoint>(`${this.apiUrl}/api/Reports/get-all-check-point-by-day?startDate=${startDate}&endDate=${endDate}`, setHeader);
+        return this.http.get<ICSVData>(`${this.apiUrl}/api/Reports/get-all-check-point-by-day?startDate=${startDate}&endDate=${endDate}`, setHeader);
     }
 }
