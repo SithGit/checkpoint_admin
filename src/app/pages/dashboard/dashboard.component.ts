@@ -19,7 +19,7 @@ import { numberWithCommas, numberWithFullStop } from 'src/app/utils/round-number
 import { FormControl, FormGroup } from '@angular/forms';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { CustomDateAdapter } from './custom-adapter';
-import { ICSVData } from 'src/app/interfaces/csv.interface';
+import { ICSVData, VehicleTypePrice } from 'src/app/interfaces/csv.interface';
 
 const MY_DATE_FORMATS = {
     parse: {
@@ -233,136 +233,92 @@ export default class DashboardComponent implements OnInit {
 
     csvExport() {
         // Get filename with current date format
-        const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+        const today = Date.now();
         const filename = `PTL-${today}.csv`;
-
-        const headerName = this.csvData.data.map((item) => {
-            return item.vehicle_type_count.map((v) => v.vehicle_type);
-        });
 
         // Generate CSV header
         const csvHeader = [
             'ວັນທີ',
             '0',
-            headerName,
-            'total',
-            '0',
-            '15.000',
-            '20.000',
-            '25.000',
-            '30.000',
-            '40.000',
-            '50.000',
-            '100.000',
-            '200.000',
-            '500.000',
-            'count',
-            'Sum Amount',
-            'totalCountAmount'
+            '15000',
+            '20000',
+            '25000',
+            '40000',
+            '50000',
+            '100000',
+            '200000',
+            '500000',
+            'ລວມເງິນ',
+            'ລົດຈັກ',
+            'ລົດສວ່ນຕົວ',
+            'ລົດຕູ້',
+            'ລົດບັນທຸກ 10 ລໍ້',
+            'ລົດບັນທຸກ 14 ລໍ້',
+            'ລົດບັນທຸກ 18 ລໍ້',
+            'ລົດບັນທຸກ 22 ລໍ້',
+            'ລົດບັນທຸກ 26 ລໍ້',
+            'ລົດບັນທຸກ 30 ລໍ້',
+            'ລົດບັນທຸກ 34 ລໍ້',
+            'ລົດເທຣເລີ 6 ລໍ້',
+            'ລົດເທຣເລີ 8 ລໍ້',
+            'ລົດເມ 4-6',
+            'ລົດເມ 8-10',
+            'ລົດເມ 12-14',
+            'ລວມຈຳນວນ',
+            'ລວມເງິນທັງໝົດ',
+            'ລວມຈຳນວນທັງໝົດ'
         ];
 
         console.log('csvHeader -->> ', csvHeader);
 
         // Generate CSV content
-        const csvContent = this.csvData.data.map((day) => {
-            const { date, total_count, total_each, vehicle_type_count, vehicle_type_price } = day;
+        const csvContent = this.generateCSVContent(this.csvData, csvHeader);
 
-            // need the result to be like this 0, 15000, 20000, 25000, 30000, 40000, 50000, 100000, 200000, 500000
-            const vehicleTypePrice = vehicle_type_price.reduce((acc, v) => {
-                return `${acc},${numberWithFullStop(v.total_price)}`;
-            }, '');
+        console.log('finalCsvContent -->> ', csvContent);
 
-            // need the result to be like this 0, 15000, 20000, 25000, 30000, 40000, 50000, 100000, 200000, 500000
-            const vehicleTypeCount = vehicle_type_count.reduce((acc, v) => {
-                return `${acc},${numberWithFullStop(v.count)}`;
-            }, '');
-
-            return `${date}${vehicleTypePrice},${total_each}${vehicleTypeCount},${total_count},${this.csvData.total_summarize},${this.csvData.total_vehicle_type_count}`;
-        });
-
-        console.log('csvContent -->> ', csvContent);
-
-        // // Combine header and content
-        // csvContent.unshift(csvHeader.join(','));
-        // const finalCsvContent = csvContent.join('\n');
-        // console.log('finalCsvContent -->> ', finalCsvContent);
-
-        // // Create Blob and download
-        // const blob = new Blob([finalCsvContent], { type: 'text/csv' });
-        // const url = window.URL.createObjectURL(blob);
-        // const link = document.createElement('a');
-        // link.href = url;
-        // link.download = filename;
-        // link.click();
-        // window.URL.revokeObjectURL(url);
+        // Create Blob and download
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+        window.URL.revokeObjectURL(url);
     }
 
-    // csvExport() {
-    //     // get filename with current date format like PTL-2021-09-01.csv
-    //     const today = Date.now();
-    //     const filename = `PTL-${today}.csv`;
+    generateCSVContent(data: ICSVData, csvHeader: string[]): string {
+        let csvContent = csvHeader.join(',') + '\n';
 
-    //     const newCsvData = this.csvData.data.map((item) => {
-    //         const vehicleTypeCount = item.vehicle_type_count.reduce((acc, v) => {
-    //             return `${v.count}`;
-    //         }, '');
+        data.data.forEach((item: any) => {
+            let row: any[] = [];
+            csvHeader.forEach((header) => {
+                if (header === 'ວັນທີ') {
+                    row.push(item.date);
+                } else if (header === 'ລວມເງິນ') {
+                    row.push(numberWithFullStop(item.total_each));
+                } else if (header === 'ລວມຈຳນວນ') {
+                    row.push(numberWithFullStop(item.total_count));
+                } else if (header === 'ລວມເງິນທັງໝົດ') {
+                    row.push(numberWithFullStop(data.total_summarize));
+                } else if (header === 'ລວມຈຳນວນທັງໝົດ') {
+                    row.push(numberWithFullStop(data.total_vehicle_type_count));
+                } else {
+                    let found = item.vehicle_type_count.find((v: any) => v.vehicle_type === header);
+                    if (found) {
+                        row.push(numberWithFullStop(found?.count) ?? 0);
+                    } else {
+                        found = item.vehicle_type_price.find((v: VehicleTypePrice) => v.price === parseInt(header));
+                        if (found) {
+                            row.push(numberWithFullStop(found?.total_price) ?? 0);
+                        } else {
+                            row.push(0);
+                        }
+                    }
+                }
+            });
+            csvContent += row.join(',') + '\n';
+        });
 
-    //         const vehicleTypePrice = item.vehicle_type_price.reduce((acc, v) => {
-    //             return `${v.total_price}`;
-    //         }, '');
-
-    //         return `${item.date},
-    //         ${vehicleTypePrice},
-    //         ${item.total_each},
-    //         ${vehicleTypeCount},
-    //         ${item.total_each}
-    //         ${this.csvData.total_summarize},
-    //         ${this.csvData.total_vehicle_type_count}`;
-    //     });
-
-    //     console.log('csvData -->> ', newCsvData);
-
-    //     if (newCsvData.length > 0) {
-    //         const csvHeader = [
-    //             `Date,
-    //             0,
-    //             15000,
-    //             20000,
-    //             25000,
-    //             30000,
-    //             40000,
-    //             50000,
-    //             100000,
-    //             200000,
-    //             500000,
-    //             total,
-    //             0,
-    //             15000,
-    //             20000,
-    //             25000,
-    //             30000,
-    //             40000,
-    //             50000,
-    //             100000,
-    //             200000,
-    //             500000,
-    //             total,
-    //             totalSumAmount,
-    //             totalCountAmount`
-    //         ];
-
-    //         csvHeader.push(...newCsvData);
-
-    //         const csvContent = csvHeader.join('\n');
-
-    //         console.log('csvContent -->> ', csvContent);
-    //         const blob = new Blob([csvContent], { type: 'text/csv' });
-    //         const url = window.URL.createObjectURL(blob);
-    //         const a = document.createElement('a');
-    //         a.href = url;
-    //         a.download = filename;
-    //         a.click();
-    //         window.URL.revokeObjectURL(url);
-    //     }
-    // }
+        return csvContent;
+    }
 }
