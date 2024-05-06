@@ -4,6 +4,9 @@ import { Component, inject, OnInit } from '@angular/core';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 
 import { NgbCalendar, NgbDate, NgbDateParserFormatter, NgbDateStruct, NgbNavChangeEvent, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 // third party
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -13,13 +16,33 @@ import { IVehicleType } from 'src/app/interfaces/vehicle.type';
 import { vehicles } from 'src/app/utils/vehicle.util';
 import ApexCharts from 'apexcharts';
 import { numberWithCommas } from 'src/app/utils/round-number.shared';
+import { FormControl, FormGroup } from '@angular/forms';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { CustomDateAdapter } from './custom-adapter';
+
+const MY_DATE_FORMATS = {
+    parse: {
+        dateInput: { year: 'numeric', month: 'short', day: 'numeric' }
+    },
+    display: {
+        dateInput: 'input',
+        monthYearLabel: { year: 'numeric', month: 'short' },
+        dateA11yLabel: { year: 'numeric', month: 'long', day: 'numeric' },
+        monthYearA11yLabel: { year: 'numeric', month: 'long' }
+    }
+};
 
 @Component({
     selector: 'app-dashboard',
     standalone: true,
-    imports: [NgApexchartsModule, SharedModule, NgbTooltipModule],
+    imports: [NgApexchartsModule, SharedModule, NgbTooltipModule, MatFormFieldModule, MatDatepickerModule],
     templateUrl: './dashboard.component.html',
-    styleUrls: ['./dashboard.component.scss']
+    styleUrls: ['./dashboard.component.scss'],
+    providers: [
+        { provide: DateAdapter, useClass: CustomDateAdapter, deps: [MAT_DATE_LOCALE] },
+        { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS }
+        // provideNativeDateAdapter()
+    ]
 })
 export default class DashboardComponent implements OnInit {
     checkPointData: CheckPointData[] | any = [];
@@ -34,35 +57,44 @@ export default class DashboardComponent implements OnInit {
     passedCarChartData: any;
     revenueChartData: any;
 
-    // Date picker range
-    calendar = inject(NgbCalendar);
-    formatter = inject(NgbDateParserFormatter);
-    minDate: NgbDateStruct;
-    maxDate: NgbDateStruct;
+    // Material date picker
+    fromDate: string;
+    toDate: string;
+    range = new FormGroup({
+        start: new FormControl(new Date()),
+        end: new FormControl(new Date())
+    });
 
-    hoveredDate: NgbDate | null = null;
-    fromDate: NgbDate | null = this.calendar.getPrev(this.calendar.getToday(), 'd', 0);
-    toDate: NgbDate | null = this.calendar.getNext(this.calendar.getToday(), 'd', 0);
-    isDisabled = (date: NgbDate, current: { month: number }) => date.month !== current.month;
-
-    constructor(private dataFetcher: DataFetcherService) {
-        const today = new Date();
-        this.maxDate = { year: today.getFullYear(), month: today.getMonth() + 1, day: today.getDate() };
-        this.minDate = { year: this.maxDate.year, month: this.maxDate.month, day: this.maxDate.day - 7 };
-    }
+    constructor(private dataFetcher: DataFetcherService) {}
 
     ngOnInit(): void {
+        console.log('range -->> ', this.range.value);
+
         this.fetchDataOnDateRange();
     }
 
-    fetchDataOnDateRange() {
-        const startDate = `${this.fromDate.year}-${this.fromDate.month}-${this.fromDate.day}`;
-        const endDate = `${this.toDate.year}-${this.toDate.month}-${this.toDate.day}`;
+    private _to2digit(n: number) {
+        return ('00' + n).slice(-2);
+    }
 
-        console.log('from --->> ', startDate, 'to --->> ', endDate);
+    setDate(startDate?: Date, endDate?: Date) {
+        const fromYear = startDate.getFullYear();
+        const fromMonth = this._to2digit(startDate.getMonth() + 1);
+        const fromDay = this._to2digit(startDate.getDate());
+        this.fromDate = `${fromYear}-${fromMonth}-${fromDay}`;
+
+        const toYear = endDate.getFullYear();
+        const toMonth = this._to2digit(endDate.getMonth() + 1);
+        const toDay = this._to2digit(endDate.getDate());
+        this.toDate = `${toYear}-${toMonth}-${toDay}`;
+    }
+
+    fetchDataOnDateRange() {
+        this.setDate(this.range.value.start, this.range.value.end);
+        console.log('from --->> ', this.fromDate, 'to --->> ', this.toDate);
 
         this.isLoading = true;
-        this.dataFetcher.getCSVData(startDate, endDate).subscribe(
+        this.dataFetcher.getCSVData(this.fromDate, this.toDate).subscribe(
             (data) => {
                 this.csvData = data.data;
                 console.log('csvData -->> ', this.csvData);
@@ -73,7 +105,7 @@ export default class DashboardComponent implements OnInit {
             }
         );
 
-        this.dataFetcher.getData(startDate, endDate).subscribe(
+        this.dataFetcher.getData(this.fromDate, this.toDate).subscribe(
             (data) => {
                 console.log('fetchDataOnDateRange -->> ', data.data);
                 // refactor object to match to the VehicleType
@@ -197,36 +229,6 @@ export default class DashboardComponent implements OnInit {
                 throw new Error(error);
             }
         );
-    }
-
-    onDateSelection(date: NgbDate) {
-        if (!this.fromDate && !this.toDate) {
-            this.fromDate = date;
-        } else if (this.fromDate && !this.toDate && date && date.after(this.fromDate)) {
-            this.toDate = date;
-            console.log('from -', this.fromDate, 'to -', this.toDate);
-        } else {
-            this.toDate = null;
-            this.fromDate = date;
-        }
-    }
-
-    isHovered(date: NgbDate) {
-        return this.fromDate && !this.toDate && this.hoveredDate && date.after(this.fromDate) && date.before(this.hoveredDate);
-    }
-
-    isInside(date: NgbDate) {
-        return this.toDate && date.after(this.fromDate) && date.before(this.toDate);
-    }
-
-    isRange(date: NgbDate) {
-        const newDate = date.equals(this.fromDate) || (this.toDate && date.equals(this.toDate)) || this.isInside(date) || this.isHovered(date);
-        return newDate;
-    }
-
-    validateInput(currentValue: NgbDate | null, input: string): NgbDate | null {
-        const parsed = this.formatter.parse(input);
-        return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
     }
 
     csvExport() {

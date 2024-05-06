@@ -39,3 +39,6 @@ $pc-secondary: map-get($preset-colors, 'preset-1', 'secondary');
 
 // font
 @import 'scss/fonts/tabler-icons.min.css';
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

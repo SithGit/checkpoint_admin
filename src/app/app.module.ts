@@ -20,6 +20,7 @@ import { NavItemComponent } from './theme/layouts/admin/navigation/nav-content/n
 import { JwtModule } from '@auth0/angular-jwt';
 import { tokenGetter } from './utils/token-extract.utils';
 import { HttpClientModule } from '@angular/common/http';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 @NgModule({
     declarations: [
@@ -47,6 +48,9 @@ import { HttpClientModule } from '@angular/common/http';
             }
         })
     ],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
+    providers: [
+      provideAnimationsAsync()
+    ]
 })
 export class AppModule {}
