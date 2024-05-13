@@ -60,9 +60,11 @@ export default class DashboardComponent implements OnInit {
     // Material date picker
     fromDate: string;
     toDate: string;
+
+    // set range date minus 1 day
     range = new FormGroup({
-        start: new FormControl(new Date()),
-        end: new FormControl(new Date())
+        start: new FormControl(new Date(new Date().setDate(new Date().getDate() - 1))),
+        end: new FormControl(new Date(new Date().setDate(new Date().getDate() - 1)))
     });
 
     constructor(private dataFetcher: DataFetcherService) {}
