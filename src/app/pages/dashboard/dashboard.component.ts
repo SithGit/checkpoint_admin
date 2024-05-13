@@ -1,10 +1,9 @@
 // angular import
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 
-import { NgbCalendar, NgbDate, NgbDateParserFormatter, NgbDateStruct, NgbNavChangeEvent, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { provideNativeDateAdapter } from '@angular/material/core';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
